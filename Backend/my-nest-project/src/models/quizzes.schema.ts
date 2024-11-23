@@ -11,7 +11,7 @@ export class Quizzes extends Document{
   module_id: string;
 
   @Prop({ type: [Object], required: true })
-  questions: Array<Record<string, any>>;
+  questions: Array<Object>;
   
   @Prop ({type:String ,required :true })
   answers: Array<string>;
