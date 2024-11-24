@@ -1,16 +1,15 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
+import  {Document} from 'mongoose';
 
 @Schema()
-export class Thread {
-  @Prop({ required: true })
-  threadId: string;
+export class Thread extends Document {
 
   @Prop({ required: true })
   title: string;
 
   @Prop({
-    type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Message' }],
+    type: [{ type: mongoose.Schema.Types.ObjectId }],
     required: true,
   })
   messages: mongoose.Types.ObjectId[];
