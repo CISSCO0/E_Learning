@@ -1,19 +1,17 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { HydratedDocument } from 'mongoose';
+import mongoose, {Document} from 'mongoose';
 
 @Schema()
-export class Chat {
-  @Prop({ required: true })
-  userId: string;
+export class Chat extends Document{
 
   @Prop({
-    type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    type: [{ type: mongoose.Schema.Types.ObjectId }],
     required: true,
   })
   users: mongoose.Types.ObjectId[];
 
   @Prop({
-    type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Message' }],
+    type: [{ type: mongoose.Schema.Types.ObjectId }],
     required: true,
   })
   messages: mongoose.Types.ObjectId[];

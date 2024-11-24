@@ -6,10 +6,10 @@ export type InstructorDocument = Instructor & Document;
 
 @Schema()
 export class Instructor {
-  @Prop({ type: Types.ObjectId, ref: 'Users', required: true })
+  @Prop({ type: Types.ObjectId,required:true })
   role_id: Types.ObjectId;
 
-  @Prop({ type: [{ type: Types.ObjectId, ref: 'Student' }] })
+  @Prop({ type: [{ type: Types.ObjectId }] })
   students: Types.ObjectId[];
 
   @Prop({ type: String, required: true }) // Field of expertise

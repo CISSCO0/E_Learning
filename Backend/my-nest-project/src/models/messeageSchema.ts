@@ -5,9 +5,7 @@ import { Document, Types } from 'mongoose';
 export type MessageDocument = Message & Document;
 
 @Schema()
-export class Message {
-  @Prop({ type: String, required: true }) // Unique message ID
-  msg_id: string;
+export class Message extends Document{
 
   @Prop({ type: String, required: true })
   content: string;
@@ -15,10 +13,10 @@ export class Message {
   @Prop({ type: Date, default: Date.now })
   time: Date;
 
-  @Prop({ type: Types.ObjectId, ref: 'Chat', required: true })
+  @Prop({ type: Types.ObjectId, required: true })
   chat_id: Types.ObjectId;
 
-  @Prop({ type: Types.ObjectId, ref: 'Users', required: true })
+  @Prop({ type: Types.ObjectId, required: true })
   sender_id: Types.ObjectId;
 }
 
