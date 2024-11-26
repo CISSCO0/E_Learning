@@ -14,6 +14,9 @@ export class Progress extends Document {
 
   @Prop({ required: true, type: Date })
   last_accessed: Date; 
+
+  @Prop({ type:[String], required: true })
+  performance: string[];
 }
 
 export const ProgressSchema = SchemaFactory.createForClass(Progress);
