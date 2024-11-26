@@ -1,7 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 
-// Define the Message Document Interface
 export type MessageDocument = Message & Document;
 
 @Schema()
@@ -20,5 +19,5 @@ export class Message extends Document{
   sender_id: Types.ObjectId;
 }
 
-// Generate the schema using SchemaFactory
+
 export const MessageSchema = SchemaFactory.createForClass(Message);

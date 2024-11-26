@@ -23,6 +23,15 @@ export class Courses extends Document {
 
   @Prop({ type:String,required: true })
   instructor: string; 
+
+  @Prop({ required: true, type: Number })
+  rating: number;
+
+  @Prop({ required: true, type: Boolean })
+   outdated: boolean;
+
+   @Prop({ type:[String], required: true })
+  keywords: string[];
 }
 
 export const CoursesSchema = SchemaFactory.createForClass(Courses);

@@ -17,6 +17,9 @@ export class Modules extends Document {
 
   @Prop({ type: Date, default: Date.now })
   created_at: Date; 
+
+  @Prop({ required: true, type: Number })
+  rating: number;
 }
 
 export const ModulesSchema = SchemaFactory.createForClass(Modules);

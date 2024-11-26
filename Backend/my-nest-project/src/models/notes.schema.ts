@@ -19,4 +19,4 @@ export class Notes extends Document {
   last_updated: Date; 
 }
 
-export const NotesScema = SchemaFactory.createForClass(Notes);
+export const NotesSchema = SchemaFactory.createForClass(Notes);
