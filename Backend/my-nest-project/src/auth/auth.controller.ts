@@ -1,15 +1,18 @@
-import { Body, Controller, HttpStatus, Post, HttpException, Res, Req } from '@nestjs/common';
+import { Body, Controller, HttpStatus, Post, HttpException, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterRequestDto } from './dto/RegisterRequestDto';
+import { RegisterAdminDto } from './dto/RegisterAdminDto';
+import { RegisterInstructorDto } from './dto/RegisterInstructorDto';
+import { RegisterStudentDto } from './dto/RegisterStudentDto';
 import { SignInDto } from './dto/SignInDto';
 
 @Controller('auth')
 export class AuthController {
-    constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) {}
+
   @Post('login')
   async signIn(@Body() signInDto: SignInDto, @Res({ passthrough: true }) res) {
     try {
-      console.log('helllo')
       const result = await this.authService.signIn(signInDto.email, signInDto.password);
 
       res.cookie('token', result.access_token, {
@@ -17,20 +20,13 @@ export class AuthController {
         secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
         maxAge: 3600 * 1000, // Cookie expiration time in milliseconds
       });
-      // Return success response
+
       return {
         statusCode: HttpStatus.OK,
         message: 'Login successful',
         user: result.payload,
       };
     } catch (error) {
-        console.log(error)
-      // Handle specific errors
-      if (error instanceof HttpException) {
-        throw error; // Pass through known exceptions
-      }
-
-      // Handle other unexpected errors
       throw new HttpException(
         {
           statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
@@ -42,19 +38,40 @@ export class AuthController {
   }
 
   @Post('register')
-  async signup(@Body() registerRequestDto: RegisterRequestDto) {
+  async register(@Body() registerDto: RegisterRequestDto) {
     try {
-      // Call the AuthService to handle registration
-      const result = await this.authService.register(registerRequestDto);
+      // Register as basic user first
+      const user = await this.authService.registerUser(registerDto);
 
-      // Return a success response with HTTP 201 Created status
+      // Assign the specific role after user registration
+      let result;
+
+      switch (registerDto.role_id) {
+        case 1: // Admin
+          result = await this.authService.registerAdmin(user, registerDto as RegisterAdminDto);
+          break;
+        case 2: // Instructor
+          result = await this.authService.registerInstructor(user, registerDto as RegisterInstructorDto);
+          break;
+        case 3: // Student
+          result = await this.authService.registerStudent(user, registerDto as RegisterStudentDto);
+          break;
+        default:
+          throw new HttpException(
+            {
+              statusCode: HttpStatus.BAD_REQUEST,
+              message: 'Invalid role ID',
+            },
+            HttpStatus.BAD_REQUEST,
+          );
+      }
+
       return {
         statusCode: HttpStatus.CREATED,
         message: 'User registered successfully',
         data: result,
       };
     } catch (error) {
-      // Handle specific errors, such as email already exists or validation errors
       if (error.status === 409) {
         throw new HttpException(
           {
@@ -65,7 +82,6 @@ export class AuthController {
         );
       }
 
-      // Catch any other errors and throw a generic internal server error
       throw new HttpException(
         {
           statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
@@ -75,8 +91,4 @@ export class AuthController {
       );
     }
   }
-
-  
-
-
 }
