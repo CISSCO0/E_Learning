@@ -30,8 +30,9 @@
 //     const hashedPassword = await bcrypt.hash(registerDto.password, 10);
 //     const newUser = { ...registerDto, password: hashedPassword };
 
-//     return this.userService.create(newUser); // Create the user in the database
-//   }
+    return this.userService.createUser(newUser); // Create the user in the database
+  }
+
 
 //   // Register Admin (after user creation)
 //   async registerAdmin(user: any, registerDto: RegisterAdminDto): Promise<any> {
