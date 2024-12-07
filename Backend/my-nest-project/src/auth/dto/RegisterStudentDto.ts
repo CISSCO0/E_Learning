@@ -1,6 +1,6 @@
 import { IsArray, IsOptional, IsString, } from 'class-validator';
-import { RegisterRequestDto } from './RegisterRequestDto';
-export class RegisterStudentDto extends RegisterRequestDto {
+import { RegisterAdminDto } from './RegisterRequestDto';
+export class RegisterStudentDto extends RegisterAdminDto {
     @IsOptional()
     @IsArray()
     @IsString({ each: true })
@@ -21,4 +21,5 @@ export class RegisterStudentDto extends RegisterRequestDto {
     @IsString({ each: true })
     certificates?: string[] = []; // List of certificate IDs
   }
+  
   
