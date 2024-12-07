@@ -4,6 +4,9 @@ import  {Document} from 'mongoose';
 
 @Schema()
 export class Thread extends Document {
+  static deleteMany(arg0: { _id: { $in: any; }; }) {
+    throw new Error('Method not implemented.');
+  }
 
   @Prop({ required: true })
   title: string;
