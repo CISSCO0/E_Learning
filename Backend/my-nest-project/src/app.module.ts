@@ -17,6 +17,10 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { ResourcesModule } from './resources/resources.module';
 import { StudentModule } from './student/student.module';
 import { UserModule } from './user/user.module';
+import { ThreadModule } from './Threads/thread.module';
+import { MessageModule } from './messages/message.module';
+import { ForumModule } from './Forums/forum.module';
+import { ChatModule } from './Chats/chat.module';
 
 @Module({
   imports: [
@@ -46,7 +50,11 @@ import { UserModule } from './user/user.module';
     NotificationsModule,
     ResourcesModule,
     StudentModule,
-    UserModule
+    UserModule,
+    ThreadModule,
+    MessageModule,
+    ForumModule,
+    ChatModule
   ],
   controllers: [AppController],
   providers: [AppService],
