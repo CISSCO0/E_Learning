@@ -14,9 +14,18 @@ export class InstructorService {
 // ======================================================================
   // Create a new instructor
   async createInstructor(dto: createInstructorDTo): Promise<Instructor> {
-    const newInstructor = new this.instructorModel(dto);
-    return newInstructor.save();
+    try {
+      const newInstructor = new this.instructorModel(dto);
+      return await newInstructor.save(); // Wait for the save to complete and return the result
+    } catch (error) {
+      // Log the error for debugging purposes
+      console.error('Error creating instructor:', error);
+      
+      // You can throw a custom error, depending on the type of error
+      throw new Error('Failed to create instructor');
+    }
   }
+  
 // ======================================================================
   // Get all instructors
   async getAllInstructors(): Promise<Instructor[]> {

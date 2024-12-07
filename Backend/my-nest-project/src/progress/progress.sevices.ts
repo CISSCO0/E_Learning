@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Progress } from './models/progress.schema';
-import { Student} from '../models/student.Schema';
+import { Student} from '../student/models/student.Schema';
 import { Modules} from '../modules/models/modules.schema';
 import { UpdateProgressDto } from './dto/update.dto';
 import {CreateProgressDto} from './dto/create.dto'

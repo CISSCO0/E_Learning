@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ModuleProgress } from './models/moduleProgress.schema';
 import { ResponsesService } from 'src/responses/response.service';
-import { ModulesService } from 'src/modules/modules.services';
+//import { ModulesService } from 'src/modules/modules.services';
 import { QuizzesService } from 'src/quizzes/quizzes.service';
 
 @Injectable()
@@ -12,7 +12,7 @@ export class ModuleProgressService {
     @InjectModel('ModuleProgress')
     private readonly moduleProgressModel: Model<ModuleProgress>,
     private readonly responseService: ResponsesService,
-    private readonly moduleService: ModulesService,
+   // private readonly moduleService: ModulesService,
     private readonly quizzesService: QuizzesService,
   ) {}
 
@@ -59,7 +59,7 @@ export class ModuleProgressService {
   // Calculate progress percentage using quiz responses
   async updateProgress(user_id: string, module_id: string): Promise<number> {
     //Fetch module by ID
-    const module = await this.moduleService.getModuleById(module_id);
+    const module = 1; //await this.moduleService.getModuleById(module_id);
     if (!module) {
       throw new NotFoundException('Module not found');
     }
@@ -85,7 +85,7 @@ export class ModuleProgressService {
     const newPercentage = (completedQuizzes / totalQuizzes) * 100;
    progress.percentage = Math.min(newPercentage, 100);
   
-    If progress reaches 100%, calculate the average score for completed quizzes
+    //If progress reaches 100%, calculate the average score for completed quizzes
     if (progress.percentage === 100 && completedQuizzes > 0) {
       // Calculate total score for completed quizzes
       const totalScore = responses.reduce((sum, response) => sum + response.score, 0);

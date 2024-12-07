@@ -4,18 +4,34 @@ import { Model } from 'mongoose';
 import { Users } from './models/users.schema';
 import { createUserDTo } from './dto/createUser.dto';
 import { updateUserDTo } from './dto/updateUser.dto';
-
+import { Admin } from 'src/admin/models/admin.shema';
+import { Student } from 'src/student/models/student.Schema'
+import { Instructor } from 'src/instructor/models/instructorSchema';
 @Injectable()
 export class UserService {
   constructor(
     @InjectModel(Users.name) private readonly userModel: Model<Users>,
+    // @InjectModel('Student') private readonly studentModel: Model<Student>,
+    // @InjectModel('Instructor') private readonly instructorModel: Model<Instructor>,
+    // @InjectModel('Admin') private readonly adminModel: Model<Admin>,
   ) {}
 // ======================================================================
   // Create a new user
   async createUser(dto: createUserDTo): Promise<Users> {
-    const newUser = new this.userModel(dto);
-    return newUser.save();
+    try {
+      // Attempt to create and save the new user
+      const newUser = new this.userModel(dto);
+      const savedUser = await newUser.save();
+      return savedUser; // Return the saved user
+  
+    } catch (error) {
+      // Log the error and throw a custom exception or rethrow it
+      console.error('Error while creating user:', error);
+      throw new Error('Failed to create user'); // You can throw a custom error or handle it in other ways
+    }
   }
+  
+  
 // ======================================================================
   // Get all users
   async getAllUsers(): Promise<Users[]> {

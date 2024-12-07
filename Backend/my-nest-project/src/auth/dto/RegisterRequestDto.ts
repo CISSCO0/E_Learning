@@ -2,11 +2,10 @@ import { IsEmail, IsNotEmpty, IsOptional, IsString, MinLength, IsInt } from 'cla
 
 export class RegisterRequestDto {
     @IsNotEmpty()
-    roleId: string;
-    // name : string;
-    // email: string;
-    // hash_pass: string;
-    // role_id: string;
-    // pfp: string;
-    // createtime: Date;
+    role: string;
+    name : string;
+    email: string;
+    hash_pass: string;
+    pfp?: string;
+    createtime: Date;
 }

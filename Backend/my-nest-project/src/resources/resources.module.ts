@@ -4,7 +4,8 @@ import { ResourcesController } from './resources.controllers';
 import { ResourcesService } from './resources.services';
 import { resource, ResourceSchema } from './models/resourse.schema';
 import { Modules } from '../modules/models/modules.schema';
-//import { AuthModule } from '../auth/auth.module';  // Assuming you have an AuthModule
+import { AuthModule } from 'src/auth/auth.module';
+import { ModulesModule } from 'src/modules/modules.module';
 
 @Module({
   imports: [
@@ -12,7 +13,8 @@ import { Modules } from '../modules/models/modules.schema';
       { name: resource.name, schema: ResourceSchema },
      // { name: Modules.name, schema: Modules },
     ]),
-   // AuthModule,  // Import AuthModule here for authentication and guards
+    AuthModule,  // Import AuthModule here for authentication and guards
+    ModulesModule
   ],
   controllers: [ResourcesController],
   providers: [ResourcesService],

@@ -1,3 +1,2 @@
-export class createAdminDTo {
-    roleId?: string;
+export class updateAdminDTo {
   }

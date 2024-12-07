@@ -4,6 +4,7 @@ import mongoose,{ Model, Types } from 'mongoose';
 import { CreateResponseDto } from './dto/createResponse.dto';
 import { Response } from './models/responses.schema'; // Import the MongoDB Response schema
 import { Question } from 'src/questions/models/questions.schema';
+import { Role } from 'src/auth/decorators/roles.decorator';
 
 @Injectable()
 export class ResponsesService {
@@ -20,6 +21,7 @@ export class ResponsesService {
 
   // Get all responses
   async getAllResponses(): Promise<Response[]> {
+    
     return await this.responseModel.find().exec();
   }
 
@@ -70,7 +72,7 @@ export class ResponsesService {
     }
     return updatedResponse;
   }
-// Submit a response and calculate the score
+// Submit a response and calculate the score (not required ;D)
 async submitResponse(
   userId: string,
   quizId: string,

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Admin } from './models/admin.shema';
@@ -13,8 +13,23 @@ export class AdminService {
 // ====================================================================== 
   // Create a new admin
   async createAdmin(dto: createAdminDTo): Promise<Admin> {
-    const newAdmin = new this.adminModel(dto);
-    return newAdmin.save();
+    try {
+      // Attempt to create and save the new admin
+      const newAdmin = new this.adminModel(dto);
+      const savedAdmin = await newAdmin.save();
+      return savedAdmin; // Return the saved admin
+    } catch (error) {
+      // Handle any errors that occur during saving
+      console.error('Error while creating admin:', error);
+  
+      // If the error is related to duplicate admin (e.g., duplicate email or other unique constraint)
+      if (error.code === 11000) { // MongoDB duplicate key error code
+        throw new ConflictException('Admin with this email already exists');
+      }
+  
+      // Handle other server errors
+      throw new InternalServerErrorException('Failed to create admin');
+    }
   }
 // ====================================================================== 
   // Get all admins
