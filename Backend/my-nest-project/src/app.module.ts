@@ -1,9 +1,14 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config'; // Import ConfigModule and ConfigService
+import { MongooseModule } from '@nestjs/mongoose';
+import { ResponsesModule } from './responses/response.module';
+import { QuestionsModule } from './questions/questions.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { QuizzesModule } from './quizzes/quizzes.module';
+import { QuestionBankModule } from './questionBank/questionBank.module';
+import { ModuleProgressModule } from './moduleProgress/moduleProgress.module';
 import { CourseModule } from './courses/courses.module';
-import { MongooseModule } from '@nestjs/mongoose';
-import { ConfigModule, ConfigService } from '@nestjs/config'; 
 
 @Module({
   imports: [
@@ -19,7 +24,12 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       }),
       inject: [ConfigService],
     }),
-     CourseModule
+    ResponsesModule,
+    QuestionsModule,
+    QuizzesModule,
+    QuestionBankModule,
+    ModuleProgressModule,
+    CourseModule
   ],
   controllers: [AppController],
   providers: [AppService],
