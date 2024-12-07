@@ -12,8 +12,8 @@ export class Message extends Document{
   @Prop({ type: Date, default: Date.now })
   time: Date;
 
-  @Prop({ type: Types.ObjectId, required: true })
-  chat_id: Types.ObjectId;
+  // @Prop({ type: Types.ObjectId, required: true })
+  // chat_id: Types.ObjectId; review chta logic to get message array msh by chat id fe el message
 
   @Prop({ type: Types.ObjectId, required: true })
   sender_id: Types.ObjectId;
