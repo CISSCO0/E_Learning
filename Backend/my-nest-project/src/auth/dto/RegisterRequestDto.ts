@@ -1,22 +1,12 @@
 import { IsEmail, IsNotEmpty, IsOptional, IsString, MinLength, IsInt } from 'class-validator';
 
 export class RegisterRequestDto {
-  @IsNotEmpty()
-  @IsString()
-  name: string; 
-
-  @IsEmail()
-  email: string; 
-
-  @IsNotEmpty()
-  @MinLength(3)
-  password: string;
-
-  @IsNotEmpty()
-  @IsInt()
-  role_id: number; 
-
-  @IsOptional()
-  @IsString()
-  pfp?: string; 
+    @IsNotEmpty()
+    roleId: string;
+    // name : string;
+    // email: string;
+    // hash_pass: string;
+    // role_id: string;
+    // pfp: string;
+    // createtime: Date;
 }

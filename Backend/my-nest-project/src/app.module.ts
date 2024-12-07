@@ -8,6 +8,7 @@ import { AppService } from './app.service';
 import { QuizzesModule } from './quizzes/quizzes.module';
 import { QuestionBankModule } from './questionBank/questionBank.module';
 import { ModuleProgressModule } from './moduleProgress/moduleProgress.module';
+import { CourseModule } from './courses/courses.module';
 
 @Module({
   imports: [
@@ -27,7 +28,8 @@ import { ModuleProgressModule } from './moduleProgress/moduleProgress.module';
     QuestionsModule,
     QuizzesModule,
     QuestionBankModule,
-    ModuleProgressModule
+    ModuleProgressModule,
+    CourseModule
   ],
   controllers: [AppController],
   providers: [AppService],
