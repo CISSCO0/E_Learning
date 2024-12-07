@@ -13,5 +13,6 @@ export class RegisterInstructorDto extends RegisterRequestDto {
     
     @IsInt()
     rating_avg?: number = 0; 
+    
   }
   

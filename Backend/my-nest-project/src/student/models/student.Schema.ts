@@ -6,9 +6,6 @@ export type StudentDocument = Student & Document;
 
 @Schema()
 export class Student {
-  @Prop({ type: Types.ObjectId, required: true })
-  role_id: Types.ObjectId;
-
   @Prop({ type: [{ type: Types.ObjectId }] })
   enrolled_courses: Types.ObjectId[];
 

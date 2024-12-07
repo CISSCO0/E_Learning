@@ -17,6 +17,13 @@ export class Progress extends Document {
 
   @Prop({ type:[String], required: true })
   performance: string[];
+
+  @Prop({ type:[String], required: true })
+  modulesId: string[];// module al by5lsaha 
+  //lma progress y5ls insert fy certificate array 
+  
+
+
 }
 
 export const ProgressSchema = SchemaFactory.createForClass(Progress);
