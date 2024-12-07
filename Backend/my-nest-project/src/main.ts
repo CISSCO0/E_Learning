@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import mongoose from 'mongoose'; 
 import * as express from 'express'; 
 import * as dotenv from 'dotenv';
+import * as multer from 'multer';
 
 async function bootstrap(): Promise<void> {
   dotenv.config();
@@ -14,8 +15,10 @@ async function bootstrap(): Promise<void> {
     credentials: true
   });
 
-  const mongoUri = process.env.MONGO_URI || 'your-default-mongo-uri';
+
+  const mongoUri = process.env.MONGO_URI || 'mongodb+srv://clown:SE123@cluster1.llyk9cg.mongodb.net/E_Learning';
   const port = process.env.PORT || 3000;
+  app.use(multer().any());  // Use multer to handle multipart form-data requests
 
   try {
     await mongoose.connect(mongoUri, {} as mongoose.ConnectOptions); 
