@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import mongoose, { Document } from 'mongoose';
 
 @Schema()
 export class Modules extends Document {
@@ -20,6 +20,12 @@ export class Modules extends Document {
 
   @Prop({ required: true, type: Number })
   rating: number;
+
+  @Prop({
+    type: [{ type: mongoose.Schema.Types.ObjectId }],
+    required: true,
+  })
+  quizzes: mongoose.Types.ObjectId[];
 }
 
 export const ModulesSchema = SchemaFactory.createForClass(Modules);
