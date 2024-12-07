@@ -9,6 +9,14 @@ import { QuizzesModule } from './quizzes/quizzes.module';
 import { QuestionBankModule } from './questionBank/questionBank.module';
 import { ModuleProgressModule } from './moduleProgress/moduleProgress.module';
 import { CourseModule } from './courses/courses.module';
+import { AuthModule } from './auth/auth.module';
+import { InstructorModule } from './instructor/instructor.module';
+import { ModulesModule } from './modules/modules.module';
+import { NotesModule } from './notes/notes.module';
+import { NotificationsModule } from './notifications/notifications.module';
+import { ResourcesModule } from './resources/resources.module';
+import { StudentModule } from './student/student.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -29,7 +37,16 @@ import { CourseModule } from './courses/courses.module';
     QuizzesModule,
     QuestionBankModule,
     ModuleProgressModule,
-    CourseModule
+    CourseModule,
+    AuthModule,
+    ConfigModule,
+    InstructorModule,
+    ModulesModule,
+    NotesModule,
+    NotificationsModule,
+    ResourcesModule,
+    StudentModule,
+    UserModule
   ],
   controllers: [AppController],
   providers: [AppService],

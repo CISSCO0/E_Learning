@@ -1,6 +1,6 @@
 import { IsArray, IsOptional, IsString, } from 'class-validator';
-import { RegisterAdminDto } from './RegisterRequestDto';
-export class RegisterStudentDto extends RegisterAdminDto {
+import { RegisterRequestDto } from './RegisterRequestDto';
+export class RegisterStudentDto extends RegisterRequestDto {
     @IsOptional()
     @IsArray()
     @IsString({ each: true })
@@ -9,17 +9,19 @@ export class RegisterStudentDto extends RegisterAdminDto {
     @IsOptional()
     @IsArray()
     @IsString({ each: true })
-    course_pref?: string[]; // Course preferences (e.g., "Math", "Science")
+    course_pref: string[] = []; // Course preferences (e.g., "Math", "Science")
+  
+   
+    user_id: string;
+    @IsOptional()
+    @IsArray()
+    @IsString({ each: true })
+    instructors: string[] = []; // List of instructor IDs
   
     @IsOptional()
     @IsArray()
     @IsString({ each: true })
-    instructors?: string[] = []; // List of instructor IDs
-  
-    @IsOptional()
-    @IsArray()
-    @IsString({ each: true })
-    certificates?: string[] = []; // List of certificate IDs
+    certificates: string[] = []; // List of certificate IDs
   }
   
   

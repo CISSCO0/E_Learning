@@ -17,6 +17,9 @@ export class Student {
 
   @Prop({ type: [String] }) // Array of certificate identifiers/paths
   certificates: string[];
+
+  @Prop({ type: String, required: true })
+  user_id: string;
 }
 
 // Generate the schema using SchemaFactory

@@ -6,8 +6,10 @@ export class Admin extends Document {
   // @Prop({ required: true })
   // id: string;
 
-  @Prop({ required: true })
-  roleId: string; // ID of the role this admin belongs to
+  @Prop({ type: String, required: true })
+  user_id: string;
+  // @Prop({ required: true })
+  // roleId: string; // ID of the role this admin belongs to
   
 }
 

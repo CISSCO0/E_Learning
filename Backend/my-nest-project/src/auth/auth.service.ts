@@ -1,72 +1,81 @@
-// import { Injectable, ConflictException, NotFoundException, UnauthorizedException } from '@nestjs/common';
-// import * as bcrypt from 'bcrypt';
-// import { JwtService } from '@nestjs/jwt';
-// import { UserService } from 'src/user/user.service';
-// import { AdminService } from 'src/admin/admin.service';
-// import { InstructorService } from 'src/instructor/instructor.service';
-// import { StudentService } from 'src/student/student.service';
-// import { RegisterRequestDto } from './dto/RegisterRequestDto';
-// import { RegisterAdminDto } from './dto/RegisterAdminDto';
-// import { RegisterInstructorDto } from './dto/RegisterInstructorDto';
-// import { RegisterStudentDto } from './dto/RegisterStudentDto';
+import { Injectable, ConflictException, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
+import { UserService } from 'src/user/user.service';
+import { AdminService } from 'src/admin/admin.service';
+import { InstructorService } from 'src/instructor/instructor.service';
+import { StudentService } from 'src/student/student.service';
+import { RegisterRequestDto } from './dto/RegisterRequestDto';
+import { RegisterAdminDto } from './dto/RegisterAdminDto';
+import { RegisterInstructorDto } from './dto/RegisterInstructorDto';
+import { RegisterStudentDto } from './dto/RegisterStudentDto';
+import { Response } from 'express'; // Import Response from express
+@Injectable()
+export class AuthService {
+  constructor(
+    private userService: UserService,
+    private adminService: AdminService,
+    private instructorService: InstructorService,
+    private studentService: StudentService,
+    private jwtService: JwtService,
+  ) {}
 
-// @Injectable()
-// export class AuthService {
-//   constructor(
-//     private userService: UserService,
-//     private adminService: AdminService,
-//     private instructorService: InstructorService,
-//     private studentService: StudentService,
-//     private jwtService: JwtService,
-//   ) {}
+  // Register User (Basic Registration)
+  async registerUser(registerDto: RegisterRequestDto): Promise<any> {
+    const existingUser = await this.userService.findByEmail(registerDto.email);
+    if (existingUser) {
+      throw new ConflictException('Email already exists');
+    }
+  
+    // Hash the password before saving
+    const hashedPassword = await bcrypt.hash(registerDto.hash_pass, 10);
+    const newUser = { ...registerDto, hash_pass: hashedPassword };
+    
+    // Create the user with the hashed password
+    const user = await this.userService.createUser(newUser);
+    return user;
+  }
+  
 
-//   // Register User (Basic Registration)
-//   async registerUser(registerDto: RegisterRequestDto): Promise<any> {
-//     const existingUser = await this.userService.findByEmail(registerDto.email);
-//     if (existingUser) {
-//       throw new ConflictException('Email already exists');
-//     }
-
-//     const hashedPassword = await bcrypt.hash(registerDto.password, 10);
-//     const newUser = { ...registerDto, password: hashedPassword };
-
-    return this.userService.createUser(newUser); // Create the user in the database
+  // Register Admin (after user creation)
+  async registerAdmin(user: any, registerDto: RegisterAdminDto): Promise<any> {
+    // Pass the userId from the user object to the admin creation
+    const admin = await this.adminService.createAdmin({ ...registerDto, user_id: user._id });
+    return { user, role: 'admin', admin };
   }
 
+  // Register Instructor (after user creation)
+  async registerInstructor(user: any, registerDto: RegisterInstructorDto): Promise<any> {
+    // Pass the userId from the user object to the instructor creation
+    const instructor = await this.instructorService.createInstructor({ ...registerDto, user_id: user._id });
+    return { user, role: 'instructor', instructor };
+  }
 
-//   // Register Admin (after user creation)
-//   async registerAdmin(user: any, registerDto: RegisterAdminDto): Promise<any> {
-//     await this.adminService.createAdmin(user._id); // Create admin-specific entity
-//     return { user, role: 'admin' };
-//   }
+  // Register Student (after user creation)
+  async registerStudent(user: any, registerDto: RegisterStudentDto): Promise<any> {
+    // Pass the userId from the user object to the student creation
+    const student = await this.studentService.createStudent({ ...registerDto, user_id: user._id });
+    return { user, role: 'student', student };
+  }
 
-//   // Register Instructor (after user creation)
-//   async registerInstructor(user: any, registerDto: RegisterInstructorDto): Promise<any> {
-//     await this.instructorService.createInstructor(user._id, registerDto); // Create instructor-specific entity
-//     return { user, role: 'instructor' };
-//   }
+  // SignIn (Login)
+  async signIn(email: string, password: string): Promise<any> {
+    const user = await this.userService.findByEmail(email);
+    
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
 
-//   // Register Student (after user creation)
-//   async registerStudent(user: any, registerDto: RegisterStudentDto): Promise<any> {
-//     await this.studentService.createStudent(user._id, registerDto); // Create student-specific entity
-//     return { user, role: 'student' };
-//   }
+    const isPasswordValid = await bcrypt.compare(password, user.hash_pass);
+    
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
 
-//   // SignIn (Login)
-//   async signIn(email: string, password: string): Promise<{ access_token: string, payload: any }> {
-//     const user = await this.userService.findByEmail(email);
-//     if (!user) {
-//       throw new NotFoundException('User not found');
-//     }
+    const payload = { userid: user._id, role: user.role };
+    const access_token = await this.jwtService.signAsync(payload);
 
-//     const isPasswordValid = await bcrypt.compare(password, user.password);
-//     if (!isPasswordValid) {
-//       throw new UnauthorizedException('Invalid credentials');
-//     }
-
-//     const payload = { userid: user._id, role: user.role };
-//     const access_token = await this.jwtService.signAsync(payload);
-
-//     return { access_token, payload };
-//   }
-// }
+    return { access_token, payload }; // Return token and user info for the controller to set as cookie
+  }
+  
+}

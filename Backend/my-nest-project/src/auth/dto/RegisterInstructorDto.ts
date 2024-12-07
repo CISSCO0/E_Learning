@@ -4,15 +4,16 @@ export class RegisterInstructorDto extends RegisterRequestDto {
     @IsOptional()
     @IsArray()
     @IsString({ each: true })
-    students?: string[] = []; 
+    students: string[] = []; 
   
     @IsNotEmpty()
     @IsString()
     field: string; 
-  
-    
+     user_id: string;
     @IsInt()
-    rating_avg?: number = 0; 
+    rating: number = 0; 
     
+  
+  
   }
   

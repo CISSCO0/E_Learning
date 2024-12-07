@@ -15,7 +15,7 @@ export class Users extends Document{
     hash_pass: string;
   
     @Prop({type:String, required: true }) 
-    role_id: string;
+    role: string;
   
     @Prop({type:String}) 
     pfp: string;

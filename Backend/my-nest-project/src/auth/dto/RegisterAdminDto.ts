@@ -6,5 +6,7 @@ export class RegisterAdminDto extends RegisterRequestDto {
   @IsString()
   roleId: string;
 
-  }
+  
+  user_id: string;
+  } 
   

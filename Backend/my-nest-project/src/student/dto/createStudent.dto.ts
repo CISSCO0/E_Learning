@@ -3,4 +3,5 @@ export class createStudentDTo {
     course_pref: string[] ;
     instructors: string[] = [];
     certificates: string[] = [];
+    user_id: string;
   }
