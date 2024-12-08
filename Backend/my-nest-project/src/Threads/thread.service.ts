@@ -11,11 +11,13 @@ import { ForumService } from 'src/Forums/forum.service';
 @Injectable()
 export class ThreadService {
   constructor(
+
     @InjectModel(Thread.name) private threadModel: Model<Thread>,
     @InjectModel(Message.name) private messageModel: Model<Message>,
     @InjectModel('Forum') private readonly forumModel: Model<Forum>,
     @InjectModel(Forum.name) private readonly forumModell: Model<Forum>,
     @Inject(forwardRef(() => ForumService)) private forumService: ForumService,
+
   ) {}
 
 

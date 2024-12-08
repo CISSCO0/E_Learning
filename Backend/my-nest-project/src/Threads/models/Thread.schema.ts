@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 import  {Document} from 'mongoose';
-
+import { ForumModule } from 'src/Forums/forum.module'; // Import ForumModule
 @Schema()
 export class Thread extends Document {
   static deleteMany(arg0: { _id: { $in: any; }; }) {

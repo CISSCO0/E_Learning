@@ -1,3 +1,4 @@
+
 import { Module ,forwardRef } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ForumController } from './forum.controller';
@@ -11,8 +12,10 @@ import { MessageModule } from 'src/messages/message.module';
   imports: [
     MongooseModule.forFeature([{ name: Forum.name, schema: ForumSchema }]),
     MongooseModule.forFeature([{ name: Thread.name, schema: ThreadSchema }]),
+
     MongooseModule.forFeature([{ name: Message.name, schema: MessageSchema }]),
     forwardRef(() => MessageModule), // Use forwardRef to avoid circular dependency
+
 
   ],
   controllers: [ForumController],

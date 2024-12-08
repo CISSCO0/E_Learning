@@ -3,7 +3,7 @@ import { IsString, IsNotEmpty, IsOptional, IsNumber } from 'class-validator';
 export class CreateModuleDto {
   @IsString()
   @IsNotEmpty()
-  courseId: string;
+  course_id: string;
 
   @IsString()
   @IsNotEmpty()

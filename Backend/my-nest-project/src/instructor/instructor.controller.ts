@@ -69,18 +69,6 @@ export class InstructorController {
   }
 
   // ======================================================================
-  @Roles(Role.Admin, Role.Student)
-  @Get('search')
-  async searchInstructor(
-    @Query() query: Partial<Instructor>,
-  ): Promise<Instructor[]> {
-    return this.instructorService.searchInstructor(query);
-  }
-
-  // ======================================================================
-  @Roles(Role.Admin, Role.Instructor, Role.Student)
-  @Get('/email/:email')
-  async findByEmail(@Param('email') email: string): Promise<Instructor | null> {
-    return this.instructorService.findByEmail(email);
-  }
+  
 }
+

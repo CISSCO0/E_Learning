@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config'; // Import ConfigModule and ConfigService
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ResponsesModule } from './responses/response.module';
 import { QuestionsModule } from './questions/questions.module';
@@ -26,6 +26,10 @@ import { ChatMessage } from './chatMessages/models/chatMessages.schema';
 import { ThreadMessageModule } from './threadMessages/threadMessages.module';
 import { ChatMessageModule } from './chatMessages/chatMessages.module';
 
+
+import { ProgressModule } from './progress/progress.module';
+
+
 @Module({
   imports: [
     // Load environment variables
@@ -40,6 +44,7 @@ import { ChatMessageModule } from './chatMessages/chatMessages.module';
       }),
       inject: [ConfigService],
     }),
+
     ResponsesModule,
     QuestionsModule,
     QuizzesModule,
@@ -53,6 +58,7 @@ import { ChatMessageModule } from './chatMessages/chatMessages.module';
     NotesModule,
     NotificationsModule,
     ResourcesModule,
+    AdminModule,
     StudentModule,
     UserModule,
     //ThreadModule,
@@ -64,6 +70,8 @@ import { ChatMessageModule } from './chatMessages/chatMessages.module';
     ChatModule,
     ChatMessageModule,
     ForumModule
+
+
   ],
   controllers: [AppController],
   providers: [AppService],
