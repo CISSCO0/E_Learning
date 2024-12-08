@@ -4,7 +4,7 @@ export class UpdateModuleDto {
 
   @IsString()
   @IsNotEmpty()
-  moduleId :string ;
+  module_id :string ;
   @IsString()
   @IsNotEmpty()
   @IsOptional()

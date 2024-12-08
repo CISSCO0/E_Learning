@@ -4,12 +4,9 @@ import { Model } from 'mongoose';
 import { Modules } from './models/modules.schema';
 import { resource } from '../resources/models/resourse.schema';
 import { CreateModuleDto } from './dto/create.modules.dto';
-import { CreateResourceDto } from '../resources/dto/create.resource.dto';
 import { UpdateModuleDto } from './dto/update.modules.dto';
 import { DeleteModuleDto } from './dto/delete.modules.dto';
 
-//students can reg course + enter all modules in the cource and do performance in all modules 
-//get module by id 
 
 @Injectable()
 export class ModulesService {
@@ -17,16 +14,25 @@ export class ModulesService {
     @InjectModel(Modules.name) private moduleModel: Model<Modules>,
     @InjectModel(resource.name) private resourceModel: Model<resource>,
   ) {}
-
+  async findAll(): Promise<Modules[]> {
+    return this.moduleModel.find().exec(); 
+  }
+  async getModuleById(moduleId: string): Promise<Modules> {
+    const module = await this.moduleModel.findById(moduleId).exec();
+    if (!module) {
+      throw new NotFoundException(`Module with ID ${moduleId} not found`);
+    }
+    return module;
+  }
   async addModule(createModuleDto: CreateModuleDto ): Promise<Modules> {
     const newModule = new this.moduleModel(createModuleDto);
     return newModule.save();
   }
 
   async updateModule(updateModuleDto: UpdateModuleDto): Promise<Modules> {
-    const { moduleId, ...updateData } = updateModuleDto;
+    const { module_id, ...updateData } = updateModuleDto;
   
-    const module = await this.moduleModel.findById(moduleId);
+    const module = await this.moduleModel.findById(module_id);
     if (!module) throw new NotFoundException('Module not found');
   
     // Update module fields with provided data
@@ -51,49 +57,6 @@ export class ModulesService {
       options: { sort: { createdAt: -1 } }, // Sort resources by date in descending order
     });
   }
-  async fetchNonOutdatedResources(moduleId: string): Promise<resource[]> {
-    const module = await this.moduleModel
-      .findById(moduleId)
-      .populate({
-        path: 'resources',
-        match: { outdated: false },
-        options: { sort: { createdAt: -1 } }, 
-      })
-      .exec();
-  
-    if (!module) throw new NotFoundException('Module not found');
-  
-    return module.resources;
-  }
-  async fetchAllResourcesByModuleId(moduleId: string): Promise<resource[]> {
-    const module = await this.moduleModel
-      .findById(moduleId)
-      .populate({
-        path: 'resources',
-        options: { sort: { createdAt: -1 } }, // Sort resources by date in descending order
-      })
-      .exec();
-  
-    if (!module) throw new NotFoundException('Module not found');
-  
-    return module.resources;
-  }
-  
-  async fetchNonOutdatedResourcesByModuleId(moduleId: string): Promise<resource[]> {
-    const module = await this.moduleModel
-      .findById(moduleId)
-      .populate({
-        path: 'resources',
-        match: { outdated: false }, // Filters resources with outdated = false
-        options: { sort: { createdAt: -1 } }
-      })
-      .exec();
-  
-    if (!module) throw new NotFoundException('Module not found');
-  
-    return module.resources;
-  }
-  
 
-  
+
 }

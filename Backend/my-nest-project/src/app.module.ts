@@ -21,6 +21,7 @@ import { ThreadModule } from './Threads/thread.module';
 import { MessageModule } from './messages/message.module';
 import { ForumModule } from './Forums/forum.module';
 import { ChatModule } from './Chats/chat.module';
+import { ProgressModule } from './progress/progress.module';
 
 @Module({
   imports: [
@@ -36,25 +37,27 @@ import { ChatModule } from './Chats/chat.module';
       }),
       inject: [ConfigService],
     }),
-    ResponsesModule,
-    QuestionsModule,
-    QuizzesModule,
-    QuestionBankModule,
-    ModuleProgressModule,
-    CourseModule,
-    AuthModule,
-    ConfigModule,
-    InstructorModule,
-    ModulesModule,
-    NotesModule,
-    NotificationsModule,
-    ResourcesModule,
-    StudentModule,
-    UserModule,
-    ThreadModule,
-    MessageModule,
-    ForumModule,
-    ChatModule
+  //  ResponsesModule,
+  //  QuestionsModule,
+  //  QuizzesModule,
+  //  QuestionBankModule,
+  //  ModuleProgressModule,
+      CourseModule,
+  //  AuthModule,
+  //  ConfigModule,
+  //  InstructorModule,
+      ModulesModule,
+  //  NotesModule,
+  //  NotificationsModule,
+      ResourcesModule,
+      StudentModule,
+  //  UserModule,
+  //  ThreadModule,
+  //  MessageModule,
+  //  ForumModule,
+  //  ChatModule
+  ProgressModule
+
   ],
   controllers: [AppController],
   providers: [AppService],
