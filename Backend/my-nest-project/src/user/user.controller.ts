@@ -13,46 +13,49 @@ import { Role } from '../auth/decorators/roles.decorator';
   export class UserController {
   constructor(private readonly userService: UserService) {}
 // ======================================================================
-  @UseGuards(AuthGuard, AuthorizationGuard)
   @Roles(Role.Admin)
   @Post()
   async createUser(@Body() dto: createUserDTo) {
     return this.userService.createUser(dto);
   }
 // ======================================================================
-  @UseGuards(AuthGuard, AuthorizationGuard)
   @Roles(Role.Admin)
   @Get()
   async getAllUsers() {
     return this.userService.getAllUsers();
   }
 // ======================================================================
-  @UseGuards(AuthGuard, AuthorizationGuard)
+  @Roles(Role.Admin, Role.Instructor)
+  @Get('search')
+  async searchByName(@Query('name') name: string){
+  await this.userService.searchByName(name);
+  return {message: 'You got it'}; 
+  }
+// ======================================================================
   @Roles(Role.Admin)
   @Get(':id')
   async getUserById(@Param('id') userId: string) {
     return this.userService.getUserById(userId);
   }
 // ======================================================================
-  @UseGuards(AuthGuard, AuthorizationGuard)
   @Roles(Role.Admin,Role.Student)
   @Put(':id')
   async updateUser(@Param('id') userId: string, @Body() dto: updateUserDTo) {
     return this.userService.updateUser(userId, dto);
   }
 // ======================================================================
-  @UseGuards(AuthGuard, AuthorizationGuard)
   @Roles(Role.Admin)
   @Delete(':id')
   async deleteUser(@Param('id') userId: string) {
     return this.userService.deleteUser(userId);
   }
 // ======================================================================
-  @UseGuards(AuthGuard, AuthorizationGuard)
   @Roles(Role.Admin,Role.Instructor,Role.Student )
   @Get('/email/:email')
   async findByEmail(@Param('email') email: string) {
     return this.userService.findByEmail(email);
   }
 // ======================================================================
+
+
 }

@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import { Student, StudentDocument } from './models/student.Schema';
 import { createStudentDTo } from './dto/createStudent.dto';
 import { updateStudentDTo } from './dto/updateStudent.dto';
+import { Users } from 'src/user/models/users.schema';
 
 @Injectable()
 export class StudentService {
@@ -43,13 +44,5 @@ export class StudentService {
     return this.studentModel.findByIdAndDelete(id).exec();
   }
 // ======================================================================
-  async searchStudent(query: Partial<Student>): Promise<Student[]> {
-  return this.studentModel.find(query).exec();
-  }
-// ======================================================================
-  // Get an student by Email
-  async findByEmail(email: string): Promise<Student | null> {
-    return this.studentModel.findOne({ email }).exec();
-  }
-// ====================================================================== 
+  
 }

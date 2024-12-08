@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config'; // Import ConfigModule and ConfigService
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ResponsesModule } from './responses/response.module';
 import { QuestionsModule } from './questions/questions.module';
@@ -17,10 +17,11 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { ResourcesModule } from './resources/resources.module';
 import { StudentModule } from './student/student.module';
 import { UserModule } from './user/user.module';
-import { ThreadModule } from './Threads/thread.module';
-import { MessageModule } from './messages/message.module';
-import { ForumModule } from './Forums/forum.module';
+// import { ThreadModule } from './Threads/thread.module';
+// import { MessageModule } from './messages/message.module';
+// import { ForumModule } from './Forums/forum.module';
 import { ChatModule } from './Chats/chat.module';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -36,25 +37,26 @@ import { ChatModule } from './Chats/chat.module';
       }),
       inject: [ConfigService],
     }),
-    ResponsesModule,
-    QuestionsModule,
-    QuizzesModule,
-    QuestionBankModule,
-    ModuleProgressModule,
-    CourseModule,
-    AuthModule,
-    ConfigModule,
+    // ResponsesModule,
+    // QuestionsModule,
+    // QuizzesModule,
+    // QuestionBankModule,
+    // ModuleProgressModule,
+    // CourseModule,
+    // AuthModule,
+    // ConfigModule,
     InstructorModule,
-    ModulesModule,
-    NotesModule,
-    NotificationsModule,
-    ResourcesModule,
+    // ModulesModule,
+    // NotesModule,
+    // NotificationsModule,
+    // ResourcesModule,
+    AdminModule,
     StudentModule,
     UserModule,
-    ThreadModule,
-    MessageModule,
-    ForumModule,
-    ChatModule
+    // --ThreadModule,
+    // --MessageModule,
+    // --ForumModule,
+    // ChatModule
   ],
   controllers: [AppController],
   providers: [AppService],

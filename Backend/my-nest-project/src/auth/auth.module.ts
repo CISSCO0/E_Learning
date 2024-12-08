@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtModule } from '@nestjs/jwt'; // Import JwtModule
@@ -10,10 +10,11 @@ import { UserModule } from 'src/user/user.module';  // Assuming UserModule exist
 @Module({
   imports: [
     // Import the relevant modules for the different roles
-    StudentModule,
-    AdminModule,
-    InstructorModule,
-    UserModule,  // If there's a general user module for shared logic
+    forwardRef(() => UserModule),
+    forwardRef(() => AdminModule),
+    forwardRef(() => StudentModule),
+    forwardRef(() => InstructorModule),
+     // If there's a general user module for shared logic
     JwtModule.register({
       global: true,  // Makes the JWT configuration globally available across modules
       secret: process.env.JWT_SECRET || 'defaultSecret',  // Set default secret key (use env variable in production)
@@ -22,6 +23,6 @@ import { UserModule } from 'src/user/user.module';  // Assuming UserModule exist
   ],
   controllers: [AuthController],  // Handle the incoming HTTP requests
   providers: [AuthService],  // Service that contains the business logic
-  exports: [JwtModule]
+  exports: [JwtModule, AuthService]
 })
 export class AuthModule {}

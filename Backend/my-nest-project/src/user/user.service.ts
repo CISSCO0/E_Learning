@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Users } from './models/users.schema';
@@ -11,9 +11,9 @@ import { Instructor } from 'src/instructor/models/instructorSchema';
 export class UserService {
   constructor(
     @InjectModel(Users.name) private readonly userModel: Model<Users>,
-    // @InjectModel('Student') private readonly studentModel: Model<Student>,
-    // @InjectModel('Instructor') private readonly instructorModel: Model<Instructor>,
-    // @InjectModel('Admin') private readonly adminModel: Model<Admin>,
+    @InjectModel('Student') private readonly studentModel: Model<Student>,
+    @InjectModel('Instructor') private readonly instructorModel: Model<Instructor>,
+    @InjectModel('Admin') private readonly adminModel: Model<Admin>,
   ) {}
 // ======================================================================
   // Create a new user
@@ -31,7 +31,6 @@ export class UserService {
     }
   }
   
-  
 // ======================================================================
   // Get all users
   async getAllUsers(): Promise<Users[]> {
@@ -48,14 +47,41 @@ export class UserService {
     return this.userModel.findByIdAndUpdate(userId, dto, { new: true }).exec();
   }
 // ======================================================================
-  // Delete user by ID
+  // Delete a user by ID 
   async deleteUser(userId: string): Promise<Users> {
+    // Fetch the user to determine their role
+    const user = await this.userModel.findById(userId).exec();
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    switch (user.role) {
+      case '3':
+        await this.studentModel.findByIdAndDelete(userId).exec();
+        break;
+      case '2':
+        await this.instructorModel.findByIdAndDelete(userId).exec();
+        break;
+      case'1' :
+        await this.adminModel.findByIdAndDelete(userId).exec();
+        break;
+      default:
+        throw new Error('Guest');
+    }
+   
     return this.userModel.findByIdAndDelete(userId).exec();
   }
+
 // ======================================================================
   // Get an student by Email
   async findByEmail(email: string): Promise<Users | null> {
     return this.userModel.findOne({ email }).exec();
   }
 // ====================================================================== 
+  async searchByName(name: string) {
+    return this.userModel
+      .find({ name: { $regex: name, $options: 'i' } }) 
+      .exec();
+  }
+// ====================================================================== 
 }
+

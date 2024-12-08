@@ -10,10 +10,9 @@ import { Forum } from 'src/Forums/models/forum.schema';
 @Injectable()
 export class ThreadService {
   constructor(
-    @InjectModel(Thread.name) private threadModel: Model<Thread>,
-    @InjectModel(Message.name) private messageModel: Model<Message>,
-    @InjectModel('Forum') private readonly forumModel: Model<Forum>,
-
+    @InjectModel(Thread.name) private readonly threadModel: Model<Thread>,
+    @InjectModel(Message.name) private readonly messageModel: Model<Message>,
+    @InjectModel(Forum.name) private readonly forumModel: Model<Forum>, // Inject ForumModel here
   ) {}
 
 
