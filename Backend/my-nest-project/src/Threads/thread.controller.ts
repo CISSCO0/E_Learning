@@ -9,6 +9,7 @@ import { Role, Roles } from '../auth/decorators/roles.decorator';
 import { Public} from '../auth/decorators/public.decorator';
 import { AuthorizationGuard } from '../auth/guards/authorization.gaurd';
 import { AuthGuard} from '../auth/guards/authentication.guard';
+import { Message } from 'src/messages/models/messeageSchema';
 
 
 @Controller('threads')
@@ -46,17 +47,22 @@ async createThreadForForum(
 }
 
 
+  // @Get(':id/messages')
+
+  // @Roles(Role.Student, Role.Instructor) // Students and instructors can view messages in a thread
+
+  // async getMessages(@Param('id') threadId: string) {
+  //   return await this.threadService.getMessages(threadId);
+  // }
   @Get(':id/messages')
-
-  @Roles(Role.Student, Role.Instructor) // Students and instructors can view messages in a thread
-
-  async getMessages(@Param('id') threadId: string) {
-    return await this.threadService.getMessages(threadId);
-  }
+@Roles(Role.Student, Role.Instructor) // Students and instructors can view messages in a thread
+async getMessages(@Param('id') threadId: string): Promise<Message[]> {
+  return this.threadService.getMessages(threadId);
+}
 
   @Get(':id')
 
-  @Roles(Role.Student, Role.Instructor) // Students and instructors can view a thread by ID
+ @Roles(Role.Student, Role.Instructor) // Students and instructors can view a thread by ID
 
   async getThreadById(@Param('id') id: string): Promise<Thread> {
     return this.threadService.getThreadById(id);
@@ -72,7 +78,7 @@ async createThreadForForum(
 
   @Delete(':id')
 
-  @Roles(Role.Instructor, Role.Admin) // Only instructors and admins can delete threads
+ @Roles(Role.Instructor, Role.Admin) // Only instructors and admins can delete threads
 
   async deleteThread(@Param('id') id: string): Promise<void> {
     return this.threadService.deleteThread(id);

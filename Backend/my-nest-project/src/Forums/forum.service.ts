@@ -15,7 +15,8 @@ export class ForumService {
   }
   constructor(
     @InjectModel(Forum.name) private forumModel: Model<Forum>,
-    @InjectModel(Thread.name) private threadModel: Model<Thread>
+    @InjectModel(Thread.name) private threadModel: Model<Thread>,
+    @InjectModel(Forum.name) private forumModell: Model<Forum>
   ) {}
 
 
