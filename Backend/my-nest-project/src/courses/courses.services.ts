@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 import { Courses } from './models/courses.schema';
 import { Student } from '../student/models/student.Schema'
-//import { Modules } from '../modules/models/modules.schema';
+import { Modules } from '../modules/models/modules.schema';
 import { Model } from 'mongoose';
 import { CreateCourseDto } from './dto/create.course.dto';
 import { UpdateCourseDto } from './dto/update.course.dto';
@@ -11,8 +11,8 @@ import { UpdateCourseDto } from './dto/update.course.dto';
 export class CoursesService {
     constructor(
         @InjectModel(Courses.name) private courseModel: mongoose.Model<Courses>,
-       // @InjectModel(Modules.name) private readonly moduleModel: Model<Modules>,
-     //  @InjectModel(Student.name) private readonly studentModel : Model<Student>
+        @InjectModel(Modules.name) private readonly moduleModel: Model<Modules>,
+        @InjectModel(Student.name) private readonly studentModel : Model<Student>
     ) { }
     private calculateAverageRating(ratings: number[]): number {
         const sum = ratings.reduce((acc, rating) => acc + rating, 0);
@@ -27,6 +27,9 @@ export class CoursesService {
 
       async update(courseId: string , updateCourseDto: UpdateCourseDto,
       ): Promise<Courses> {
+        if (updateCourseDto.keywords) {
+          updateCourseDto.keywords = updateCourseDto.keywords.map(keyword => keyword.toLowerCase());
+      }
         const updatedCourse = await this.courseModel.findByIdAndUpdate(
           courseId, updateCourseDto,{ new: true },);
         if (!updatedCourse) {
@@ -35,16 +38,24 @@ export class CoursesService {
         return updatedCourse;
       }
 
-      async delete(courseId: string): Promise<void> {
-        // Check if any students are enrolled in the course
-        //const enrolledStudents = await this.studentModel.findOne({ enrolled_courses: courseId });
-        // if (enrolledStudents) {
-        //   throw new BadRequestException(`Cannot delete course with ID ${courseId} because students are enrolled.`);
-        // }
+      async delete(courseId: string) {
+       // Check if any students are enrolled in the course
+        const enrolledStudents = await this.studentModel.findOne({ enrolled_courses: courseId });
+        if (enrolledStudents) {
+          throw new BadRequestException(`Cannot delete course with ID ${courseId} because students are enrolled.`);
+        }
       
-        // // Delete all modules associated with the course
-        // const modulesResult = await this.moduleModel.deleteMany({ course_id: courseId });
-        // console.log(`${modulesResult.deletedCount} modules deleted`);
+        // Delete all modules associated with the course
+        const modulesResult = await this.moduleModel.deleteMany({ course_id: courseId });
+        console.log(`${modulesResult.deletedCount} modules deleted`);
+
+         // Delete the course itself
+        const courseResult = await this.courseModel.deleteOne({ _id: courseId });
+        if (courseResult.deletedCount === 0) {
+          throw new NotFoundException(`Course with ID ${courseId} not found.`);
+        }
+
+        return `Course with ID ${courseId} deleted successfully`;
       }
 
       async getAllCourses(): Promise<Courses[]> {
@@ -92,17 +103,19 @@ export class CoursesService {
 }
 
 async searchByKeywords(keywords: string[]): Promise<Courses[]> {
+  const lowerCaseKeywords = keywords.map(keyword => keyword.toLowerCase());
   const courses = await this.courseModel.find({
- keywords: { $in: keywords },}).exec();
+ keywords: { $in: lowerCaseKeywords },}).exec();
             if (!courses.length) {
               throw new NotFoundException('No courses found with the given keywords');
             }
             return courses;
 }
 async searchByKeywordsForStudents(keywords: string[]): Promise<Courses[]> {
+  const lowerCaseKeywords = keywords.map(keyword => keyword.toLowerCase());
             const courses = await this.courseModel
               .find({
-                keywords: { $in: keywords },
+                keywords: { $in: lowerCaseKeywords },
               })
               .select('-ratings -created_by') // Exclude ratings and created_by fields
               .exec();

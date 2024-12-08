@@ -28,7 +28,7 @@ async function bootstrap(): Promise<void> {
   const port = process.env.PORT || 3000;
 
   // Use multer for handling multipart/form-data (e.g., file uploads)
-  app.use(multer().any());
+  //app.use(multer().any());
 
   try {
     // Connect to MongoDB

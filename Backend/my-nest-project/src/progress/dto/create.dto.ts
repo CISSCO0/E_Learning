@@ -1,11 +1,12 @@
 import { IsArray, IsDate, IsNumber, IsString, Min, Max } from 'class-validator';
+import { Types } from 'mongoose';
 
 export class CreateProgressDto {
   @IsString()
-  user_id: string;
+  user_id: Types.ObjectId ;
 
   @IsString()
-  course_id: string;
+  course_id:  Types.ObjectId ;
 
   @IsNumber()
   @Min(0)

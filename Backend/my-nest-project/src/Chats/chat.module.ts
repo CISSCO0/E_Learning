@@ -1,10 +1,11 @@
-import { Module } from '@nestjs/common';
+import { Module ,forwardRef} from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ChatController } from './chat.controller';
 import { ChatService } from './chat.service';
 import { Chat, ChatSchema } from '../Chats/models/chat.schema';
 import { Message, MessageSchema } from '../messages/models/messeageSchema';
-import { Users ,UserSchema } from 'src/user/models/users.schema';
+import { Users, UserSchema } from '../user/models/users.schema'; // Import Users
+
 
 @Module({
   imports: [

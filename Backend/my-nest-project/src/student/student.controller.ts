@@ -22,15 +22,18 @@ import { Role } from '../auth/decorators/roles.decorator';
 import { Student } from './models/student.Schema';
 
 
+
 @UseGuards(AuthGuard, AuthorizationGuard)
+
+
 @Controller('students')
 export class StudentController {
   constructor(private readonly studentService: StudentService) {}
 
   // ======================================================================
-  @Roles(Role.Admin, Role.Student)
+ // @Roles(Role.Admin, Role.Student)
   @Post()
-  @UsePipes(new ValidationPipe())
+ // @UsePipes(new ValidationPipe())
   async createStudent(@Body() dto: createStudentDTo): Promise<Student> {
     return this.studentService.createStudent(dto);
   }
@@ -50,9 +53,9 @@ export class StudentController {
   }
 
   // ======================================================================
-  @Roles(Role.Admin, Role.Student)
+  //@Roles(Role.Admin, Role.Student)
   @Put(':id')
-  @UsePipes(new ValidationPipe())
+ // @UsePipes(new ValidationPipe())
   async updateStudent(
     @Param('id') id: string,
     @Body() dto: updateStudentDTo,
