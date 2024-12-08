@@ -10,6 +10,6 @@ export class CreateForumDto {
 
   @IsString()
   
-  instructorId: string; // ID of the instructor moderating the forum
+  instructorId: string;
   
 }

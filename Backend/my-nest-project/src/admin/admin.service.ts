@@ -54,9 +54,5 @@ export class AdminService {
     return this.adminModel.findByIdAndDelete(id).exec();
   }
 // ====================================================================== 
-  // Get an admin by Email
-  async findByEmail(email: string): Promise<Admin | null> {
-    return this.adminModel.findOne({ email }).exec();
-  }
-// ====================================================================== 
 }
+

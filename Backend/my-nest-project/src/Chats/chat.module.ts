@@ -6,6 +6,7 @@ import { Chat, ChatSchema } from '../Chats/models/chat.schema';
 import { Message, MessageSchema } from '../messages/models/messeageSchema';
 import { Users, UserSchema } from '../user/models/users.schema'; // Import Users
 
+
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Chat.name, schema: ChatSchema }]),

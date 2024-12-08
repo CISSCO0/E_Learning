@@ -21,7 +21,11 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { Role } from '../auth/decorators/roles.decorator';
 import { Student } from './models/student.Schema';
 
-//@UseGuards(AuthGuard, AuthorizationGuard)
+
+
+@UseGuards(AuthGuard, AuthorizationGuard)
+
+
 @Controller('students')
 export class StudentController {
   constructor(private readonly studentService: StudentService) {}
@@ -66,20 +70,6 @@ export class StudentController {
     await this.studentService.deleteStudent(id);
     return { message: 'Student deleted successfully' };
   }
-
   // ======================================================================
-  @Roles(Role.Admin, Role.Instructor)
-  @Get('search')
-  async searchStudent(
-    @Query() query: Partial<Student>,
-  ): Promise<Student[]> {
-    return this.studentService.searchStudent(query);
-  }
-
-  // ======================================================================
-  @Roles(Role.Admin, Role.Instructor, Role.Student)
-  @Get('/email/:email')
-  async findByEmail(@Param('email') email: string): Promise<Student | null> {
-    return this.studentService.findByEmail(email);
-  }
+  
 }

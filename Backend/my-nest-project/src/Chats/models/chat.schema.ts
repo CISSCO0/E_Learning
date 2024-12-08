@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, {Document} from 'mongoose';
 import { Users } from '../../user/models/users.schema';
 
+
 @Schema()
 export class Chat extends Document {
   @Prop({
