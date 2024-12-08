@@ -15,7 +15,7 @@ export class MessageController {
 
   @Post()
 
-  @Roles(Role.Student, Role.Instructor) // Students and instructors can create messages
+ @Roles(Role.Student, Role.Instructor) // Students and instructors can create messages
 
   async createMessage(@Body() createMessageDto: CreateMessageDto): Promise<Message> {
     return this.messageService.createMessage(createMessageDto.chatId, createMessageDto.senderId, createMessageDto.content);
@@ -23,7 +23,7 @@ export class MessageController {
 
   @Get(':chatId')
 
-  @Roles(Role.Student, Role.Instructor) // Students and instructors can view messages in a chat
+@Roles(Role.Student, Role.Instructor) // Students and instructors can view messages in a chat
 
   async getMessages(@Param('chatId') chatId: string): Promise<Message[]> {
     return this.messageService.getMessages(chatId);
@@ -31,7 +31,7 @@ export class MessageController {
 
 
   @Delete(':messageId')
-  @Roles(Role.Student, Role.Instructor) // Only authorized roles can delete messages
+ @Roles(Role.Student, Role.Instructor) // Only authorized roles can delete messages
   async deleteMessage(@Param('messageId') messageId: string): Promise<Message> {
     const deletedMessage = await this.messageService.deleteMessage(messageId);
     if (!deletedMessage) {

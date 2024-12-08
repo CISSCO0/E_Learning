@@ -6,9 +6,9 @@ import { Chat } from '../Chats/models/chat.schema';
 import { Message } from '../messages/models/messeageSchema'
 import { CreateMessageDto } from 'src/messages/dto/create-message.dto';
 import { Role, Roles } from '../auth/decorators/roles.decorator';
-import { Public} from '../auth/decorators/public.decorator';
-import { AuthorizationGuard } from '../auth/guards/authorization.gaurd';
-import { AuthGuard} from '../auth/guards/authentication.guard';
+ import { Public} from '../auth/decorators/public.decorator';
+ import { AuthorizationGuard } from '../auth/guards/authorization.gaurd';
+ import { AuthGuard} from '../auth/guards/authentication.guard';
 @Controller('chats')
 @UseGuards(AuthGuard, AuthorizationGuard) // Apply guards to all routes in this controller
 
@@ -40,7 +40,7 @@ export class ChatController {
 
   @Get(':id/messages')
 
-  @Roles(Role.Student, Role.Instructor) // Students and instructors can view messages in a chat
+ @Roles(Role.Student, Role.Instructor) // Students and instructors can view messages in a chat
 
   // async getMessages(@Param('id') chatId: string) {
   //   return await this.chatService.getMessages(chatId);

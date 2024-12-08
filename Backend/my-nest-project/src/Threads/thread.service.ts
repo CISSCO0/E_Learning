@@ -1,10 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Thread} from './models/Thread.schema';
 import { Message } from '../messages/models/messeageSchema';
 import { CreateMessageDto } from 'src/messages/dto/create-message.dto';
 import { Forum } from 'src/Forums/models/forum.schema';
+import { ForumService } from 'src/Forums/forum.service';
 
 
 @Injectable()
@@ -13,7 +14,8 @@ export class ThreadService {
     @InjectModel(Thread.name) private threadModel: Model<Thread>,
     @InjectModel(Message.name) private messageModel: Model<Message>,
     @InjectModel('Forum') private readonly forumModel: Model<Forum>,
-
+    @InjectModel(Forum.name) private readonly forumModell: Model<Forum>,
+    @Inject(forwardRef(() => ForumService)) private forumService: ForumService,
   ) {}
 
 
@@ -27,7 +29,7 @@ export class ThreadService {
     const message = new this.messageModel({
       content: initialMessage,
       senderId,
-      chat_id: thread._id,
+      thread_id: thread._id,
     });// call api message 
   
     // Save both thread and initial message
@@ -44,9 +46,13 @@ export class ThreadService {
   }
   
 
-  async getMessages(threadId: string) {
-    return await this.messageModel.find({ thread_id: threadId }).exec();// get array of message from thread id logic error 
+  // async getMessages(threadId: string) {
+  //   return await this.messageModel.find({ thread_id: threadId }).exec();// get array of message from thread id logic error 
+  // }
+  async getMessages(threadId: string): Promise<Message[]> {
+    return this.messageModel.find({ thread_id: threadId }).populate('sender_id').exec();
   }
+  
   async createThread(title: string, messages: string[]): Promise<Thread> {
     const newThread = new this.threadModel({ title, messages: [] });
     return newThread.save();

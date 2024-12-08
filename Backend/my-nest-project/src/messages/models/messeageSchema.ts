@@ -17,6 +17,13 @@ export class Message extends Document{
 
   @Prop({ type: Types.ObjectId, required: true })
   sender_id: Types.ObjectId;
+
+  @Prop({ type: Types.ObjectId, required: true })
+  chat_id: Types.ObjectId;
+
+  @Prop({ type: Types.ObjectId, required: true })
+thread_id: Types.ObjectId;
+
 }
 
 

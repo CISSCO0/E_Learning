@@ -10,7 +10,6 @@ import { AuthorizationGuard } from '../auth/guards/authorization.gaurd';
 import { AuthGuard} from '../auth/guards/authentication.guard';
 
 @Controller('forums')
-
 @UseGuards(AuthGuard, Roles) // Apply authentication and authorization guards
 
 export class ForumController {
@@ -41,15 +40,6 @@ export class ForumController {
     return this.forumService.deleteThreadFromForum(forumId, threadId);
   }
 
-
-  // @Post(':courseId/threads')
-
-  // @Roles(Role.Student, Role.Instructor) // Students and instructors can create threads
-
-  // async createThread(@Param('courseId') courseId: string, @Body() createThreadDto: CreateThreadDto) {
-  //   return await this.forumService.createThread(courseId, createThreadDto);
-  // }
-
   @Get(':courseId')
 
   @Roles(Role.Student, Role.Instructor) // Students and instructors can view the forum by course
@@ -64,11 +54,11 @@ export class ForumController {
 
   async getThreads(@Param('courseId') courseId: string) {
     return await this.forumService.getThreads(courseId);
-  } //
+  } 
 
   @Get()
 
-  @Roles(Role.Admin, Role.Instructor) // Only admins and instructors can view all forums
+ @Roles(Role.Admin, Role.Instructor) // Only admins and instructors can view all forums
 
   async getAllForums() {
     return await this.forumService.getAllForums();
@@ -85,13 +75,13 @@ export class ForumController {
 
   @Get(':forumId')
 
-  @Roles(Role.Student, Role.Instructor) // Students and instructors can view a forum by its ID
+ @Roles(Role.Student, Role.Instructor) // Students and instructors can view a forum by its ID
 
   async getForum(@Param('forumId') Forum: string) {
     return this.forumService.findById(Forum);
   }
 
-   // Endpoint to delete a forum by courseId
+   //Endpoint to delete a forum by courseId
    @Delete(':courseId')
    async delete(@Param('courseId') courseId: string): Promise<void> {
      try {
