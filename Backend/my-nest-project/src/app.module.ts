@@ -17,10 +17,15 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { ResourcesModule } from './resources/resources.module';
 import { StudentModule } from './student/student.module';
 import { UserModule } from './user/user.module';
-// import { ThreadModule } from './Threads/thread.module';
-// import { MessageModule } from './messages/message.module';
-// import { ForumModule } from './Forums/forum.module';
-import { ChatModule } from './Chats/chat.module';
+import { ThreadModule } from './thread/threads.module';
+import { MessageModule } from './messages/message.module';
+import { ForumModule } from './forum/forum.module';
+import { ChatModule } from './chat/chat.modules';
+import { ThreadMessage } from './threadMessages/models/threadMessages.schema';
+import { ChatMessage } from './chatMessages/models/chatMessages.schema';
+import { ThreadMessageModule } from './threadMessages/threadMessages.module';
+import { ChatMessageModule } from './chatMessages/chatMessages.module';
+
 
 import { ProgressModule } from './progress/progress.module';
 
@@ -56,10 +61,16 @@ import { ProgressModule } from './progress/progress.module';
     AdminModule,
     StudentModule,
     UserModule,
-    // --ThreadModule,
-    //--MessageModule,
-    //--ForumModule,
-    ChatModule
+    //ThreadModule,
+    //MessageModule,
+    //ForumModule,
+    // ChatModule
+    ThreadModule,
+    ThreadMessageModule,
+    ChatModule,
+    ChatMessageModule,
+    ForumModule
+
 
   ],
   controllers: [AppController],
