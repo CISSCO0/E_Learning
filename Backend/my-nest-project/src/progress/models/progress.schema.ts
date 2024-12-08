@@ -1,13 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-
+import { Types } from 'mongoose';
 @Schema()
 export class Progress extends Document {
   @Prop({ required: true })
   user_id: string; 
 
   @Prop({ required: true })
-  course_id: string; 
+  course_id: Types.ObjectId; 
 
   @Prop({ required: true, type: Number, min: 0, max: 100 })
   completion_percentage: number;
@@ -19,11 +19,8 @@ export class Progress extends Document {
   performance: string[];
 
   @Prop({ type:[String], required: true })
-  modulesId: string[];// module al by5lsaha 
-  //lma progress y5ls insert fy certificate array 
-  
-
-
+  modulesId: string[];
+   
 }
 
 export const ProgressSchema = SchemaFactory.createForClass(Progress);

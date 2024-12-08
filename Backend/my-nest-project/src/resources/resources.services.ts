@@ -14,11 +14,22 @@ export class ResourcesService {
     @InjectModel(Modules.name) private moduleModel: Model<Modules>,
   ) {}
 
-  // Add a new resource with Multer
-  async addResource(moduleId: string, createResourceDto: CreateResourceDto, fileName: string, filePath: string): Promise<resource> {
+  async addResource(
+    moduleId: string,
+    createResourceDto: CreateResourceDto,
+    fileName: string,
+    filePath: string,
+  ): Promise<resource> {
+    console.log('Looking for module with ID:', moduleId); // Debug log
     const module = await this.moduleModel.findById(moduleId);
-    if (!module) throw new NotFoundException('Module not found');
-
+  
+    if (!module) {
+      console.error('Module not found with ID:', moduleId); // Debug log
+      throw new NotFoundException('Module not found');
+    }
+  
+    console.log('Found module:', module); // Debug log
+  
     // Create the resource in the database with file info
     const newResource = new this.resourceModel({
       ...createResourceDto,
@@ -26,15 +37,20 @@ export class ResourcesService {
       filePath,
       outdated: false,
     });
-
+  
+    console.log('Creating new resource with details:', newResource); // Debug log
     const savedResource = await newResource.save();
-
+    console.log('Saved new resource:', savedResource); // Debug log
+  
     // Associate the resource with the module
     module.resources.push(savedResource);
+    console.log('Updated module resources:', module.resources); // Debug log
     await module.save();
-
+    console.log('Module successfully updated with new resource'); // Debug log
+  
     return savedResource;
   }
+  
 
   async updateResourceOutdatedFlag(resourceId: string): Promise<resource> {
     const resourceItem = await this.resourceModel.findById(resourceId);
@@ -50,6 +66,7 @@ export class ResourcesService {
       .populate({
         path: 'resources',
         match: { outdated: false },
+        options: { sort: { createdAt: -1 } }, // Sort resources by date in descending order
       })
       .exec();
 
@@ -58,23 +75,46 @@ export class ResourcesService {
     return module.resources;
   }
 
-  async fetchAllResourcesWithDownloadLinks(moduleId: string): Promise<resource[]> {
-    const module = await this.moduleModel.findById(moduleId).populate('resources').exec();
+  async fetchAllResourcesWithDownloadLinks(moduleId: string): Promise<any[]> {
+    const module = await this.moduleModel
+      .findById(moduleId)
+      .populate('resources')
+      .lean() // Ensure that the resources are plain objects
+      .exec();
+  
     if (!module) throw new NotFoundException('Module not found');
-
+  
     return module.resources.map((res) => ({
-      ...res.toObject(),
+      ...res,
       downloadLink: `/resources/download/${res.fileName}`,
     }));
   }
+  
+  async fetchAllResourcesByModuleId(moduleId: string): Promise<resource[]> {
+    const module = await this.moduleModel
+      .findById(moduleId)
+      .populate({
+        path: 'resources',
+        options: { sort: { createdAt: -1 } }, // Sort resources by date in descending order
+      })
+      .exec();
+  
+    if (!module) throw new NotFoundException('Module not found');
+  
+    return module.resources;
+  }
 
   async downloadResource(fileName: string, res: any): Promise<void> {
-    const filePath = path.join(__dirname, './uploads', fileName);
-
+    // Resolve the path relative to the root directory of your project
+    const filePath = path.resolve(__dirname, '../..', 'uploads', fileName);
+    console.log(filePath + "yeas");
+  
+    // Check if the file exists
     if (!fs.existsSync(filePath)) {
       throw new NotFoundException('File not found');
     }
-
+  
+    // Send the file to the client
     res.sendFile(filePath);
   }
 
