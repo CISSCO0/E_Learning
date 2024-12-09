@@ -25,10 +25,9 @@ import { ThreadMessage } from './threadMessages/models/threadMessages.schema';
 import { ChatMessage } from './chatMessages/models/chatMessages.schema';
 import { ThreadMessageModule } from './threadMessages/threadMessages.module';
 import { ChatMessageModule } from './chatMessages/chatMessages.module';
-
-
 import { ProgressModule } from './progress/progress.module';
-
+import { AdminModule } from './admin/admin.module';
+import { LogModule } from './Log/logs.module';
 
 @Module({
   imports: [
@@ -45,6 +44,7 @@ import { ProgressModule } from './progress/progress.module';
       inject: [ConfigService],
     }),
 
+    // Modules
     ResponsesModule,
     QuestionsModule,
     QuizzesModule,
@@ -52,7 +52,6 @@ import { ProgressModule } from './progress/progress.module';
     ModuleProgressModule,
     CourseModule,
     AuthModule,
-    ConfigModule,
     InstructorModule,
     ModulesModule,
     NotesModule,
@@ -61,19 +60,14 @@ import { ProgressModule } from './progress/progress.module';
     AdminModule,
     StudentModule,
     UserModule,
-    //ThreadModule,
-    //MessageModule,
-    //ForumModule,
-    // ChatModule
     ThreadModule,
     ThreadMessageModule,
     ChatModule,
     ChatMessageModule,
-    ForumModule
-
-
+    ForumModule,
+    LogModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController],  // Only AppController should be here
   providers: [AppService],
 })
 export class AppModule {}
