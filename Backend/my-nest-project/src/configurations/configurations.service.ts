@@ -11,7 +11,7 @@ export class ConfigurationsService {
   constructor(@InjectModel(Configuration.name) private configurationModel: Model<Configuration>) {}
 
   // Search configurations by key
-  async searchByKey(key: string) {
+  /*async searchByKey(key: string) {
     if (!key) throw new BadRequestException('Search key is required');
     
     // Log the key for debugging
@@ -30,7 +30,7 @@ export class ConfigurationsService {
   
     return result;
   }
-  
+  */
   // Get all configurations
   async findAll(): Promise<Configuration[]> {
     return this.configurationModel.find().exec();
@@ -91,7 +91,7 @@ export class ConfigurationsService {
   }
 
   //............................................................................................................................
-  // Bulk update configurations
+/*  // Bulk update configurations
   async bulkUpdate(bulkUpdateDto: UpdateConfigurationDto[]): Promise<any[]> {
     const results = await Promise.all(
       bulkUpdateDto.map(async (config) => {
@@ -111,17 +111,17 @@ export class ConfigurationsService {
       }),
     );
     return results;
-  }
+  }*/
 //..............................................................................................................................  
 
   // Get configurations by role
-  async getByRole(role: string) {
+ /* async getByRole(role: string) {
     if (!role) {
       throw new BadRequestException('Role parameter is required');
     }
     return this.configurationModel.find({ roles: { $in: [role] } }).exec();
   }
-
+*/
   async createDefaultConfiguration(userId: string): Promise<Configuration> {
   // Validate that userId is a non-empty string
   if (!userId || typeof userId !== 'string') {
