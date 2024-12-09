@@ -9,7 +9,7 @@ export class UpdateNotificationDto {
   @IsArray()
   @ArrayNotEmpty()
   @IsString({ each: true }) // Validate each element of the array as a string
-  receiverId?: string[]; // Optional, change to array of strings
+  receiverId?: string[];
 
   @IsOptional()
   @IsString()

@@ -10,7 +10,7 @@ import { JwtModule } from '@nestjs/jwt';  // Import JwtModule
     MongooseModule.forFeature([{ name: Configuration.name, schema: ConfigurationSchema }]),
     JwtModule.register({
       secret: process.env.JWT_SECRET,  // Ensure JWT_SECRET is in your .env file
-      signOptions: { expiresIn: '60s' },  // Adjust expiration as needed
+      signOptions: { expiresIn: '1h' },  // Adjust expiration as needed
     }),
   ],
   controllers: [ConfigurationsController],

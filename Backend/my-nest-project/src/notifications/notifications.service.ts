@@ -63,18 +63,46 @@ export class NotificationsService {
 
   async update(id: string, updateNotificationDto: UpdateNotificationDto): Promise<Notification> {
     try {
+      // Log the incoming data to verify it
+      console.log('Received updateNotificationDto:', updateNotificationDto);
+      
+      const updateData: any = { ...updateNotificationDto };
+  
+      // Map `isRead` to `read` for schema compatibility
+      if ('isRead' in updateNotificationDto) {
+        updateData.read = updateNotificationDto.isRead;
+        delete updateData.isRead; // Remove the original field
+      }
+  
+      // Log the final object before performing the update
+      console.log('Mapped Update Data:', updateData);
+  
+      // Ensure the update happens and the new document is returned
       const updatedNotification = await this.notificationModel
-        .findByIdAndUpdate(id, updateNotificationDto, { new: true })
+        .findByIdAndUpdate(
+          id,
+          { $set: updateData }, // Use $set to explicitly update fields
+          { new: true, runValidators: true } // new: true returns the updated document
+        )
         .exec();
+  
       if (!updatedNotification) {
         throw new Error('Notification not found');
       }
+  
+      // Log the updated notification to verify the changes
+      console.log('Updated Notification:', updatedNotification);
+  
       return updatedNotification;
     } catch (error) {
-      console.error('Error updating notification:', error);
-      throw new Error('Failed to update notification');
+      console.error('Error updating notification:', error.message);
+      throw new Error(`Failed to update notification: ${error.message}`);
     }
   }
+  
+  
+  
+  
 
   async remove(id: string): Promise<Notification> {
     try {
@@ -137,7 +165,7 @@ export class NotificationsService {
     }
   }
   
-
+/*
   // New: Get notifications by type
   async findByType(type: string): Promise<Notification[]> {
     try {
@@ -166,5 +194,5 @@ export class NotificationsService {
       console.error('Error streaming notifications:', error);
       throw new Error('Failed to stream notifications');
     }
-  }
+  }*/
 }
