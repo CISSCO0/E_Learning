@@ -1,16 +1,16 @@
 import { Controller, Get, Post, Patch, Delete, Param, Body, Query, UseGuards, BadRequestException, NotFoundException } from '@nestjs/common';
 import { LogsService } from './logs.service';
- import { CreateLogDto } from './dto/create-log.dto';
+import { CreateLogDto } from './dto/create-log.dto';
 import { UpdateLogDto } from './dto/update-log.dto';
 import { Log } from './models/logs.schema';
 // Comment out these imports to bypass authentication temporarily
  import { AuthGuard } from '../auth/guards/authentication.guard';
- import { AuthorizationGuard } from '../auth/guards/authorization.gaurd'; // Match the filename
+ import { AuthorizationGuard } from '../auth/guards/authorization.guard';
  import { Roles } from '../auth/decorators/roles.decorator';
  import { Role } from '../auth/decorators/roles.decorator';
 
 @Controller('logs')
-// Comment out the guards temporarily for testing
+
  @UseGuards(AuthGuard, AuthorizationGuard)
  @Roles(Role.Admin) // Restrict to Admin role
 export class LogsController {
@@ -26,7 +26,7 @@ export class LogsController {
   }
 
   @Get()
- // @Roles(Role.Admin) // Only admins can view all logs
+ @Roles(Role.Admin) // Only admins can view all logs
   async findAll(
     @Query('page') page: string = '1',  // default to 1
     @Query('limit') limit: string = '10' // default to 10

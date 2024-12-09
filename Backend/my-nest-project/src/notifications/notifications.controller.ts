@@ -14,7 +14,7 @@ import { NotificationsService } from './notifications.service';
 import { CreateNotificationDto } from './dto/create-notification.dto';
 import { UpdateNotificationDto } from './dto/update-notification.dto';
 import { AuthGuard } from '../auth/guards/authentication.guard'; // Remove authentication guard for testing
-import { AuthorizationGuard } from '../auth/guards/authorization.gaurd'; // Match the filename
+import { AuthorizationGuard } from '../auth/guards/authorization.guard'; // Remove authorization guard for testing
 import { Roles } from '../auth/decorators/roles.decorator'; // Remove roles decorator for testing
 import { Role } from '../auth/decorators/roles.decorator'; // Remove roles enum for testing
 

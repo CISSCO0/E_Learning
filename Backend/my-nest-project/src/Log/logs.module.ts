@@ -16,4 +16,4 @@ import { JwtModule } from '@nestjs/jwt';  // Import JwtModule
   controllers: [LogsController],  // Register the controller
   providers: [LogsService],      // Register the service
 })
-export class LogModule {}
+export class LogsModule {}
