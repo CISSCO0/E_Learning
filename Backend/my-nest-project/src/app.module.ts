@@ -27,7 +27,10 @@ import { ThreadMessageModule } from './threadMessages/threadMessages.module';
 import { ChatMessageModule } from './chatMessages/chatMessages.module';
 import { ProgressModule } from './progress/progress.module';
 import { AdminModule } from './admin/admin.module';
-import { LogModule } from './Log/logs.module';
+import { LogsModule } from './Log/logs.module';
+import { BackupService } from './backup/backup.service';
+import { ScheduleModule } from '@nestjs/schedule';
+import { BackupModule } from './backup/backup.module';
 
 @Module({
   imports: [
@@ -43,6 +46,7 @@ import { LogModule } from './Log/logs.module';
       }),
       inject: [ConfigService],
     }),
+    ScheduleModule.forRoot(),
 
     // Modules
     ResponsesModule,
@@ -65,9 +69,10 @@ import { LogModule } from './Log/logs.module';
     ChatModule,
     ChatMessageModule,
     ForumModule,
-    LogModule,
+    LogsModule,
+    BackupModule
   ],
   controllers: [AppController],  // Only AppController should be here
-  providers: [AppService],
+  providers: [AppService, BackupService],
 })
 export class AppModule {}
