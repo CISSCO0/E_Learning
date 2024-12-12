@@ -5,7 +5,7 @@ import { UpdateLogDto } from './dto/update-log.dto';
 import { Log } from './models/logs.schema';
 // Comment out these imports to bypass authentication temporarily
  import { AuthGuard } from '../auth/guards/authentication.guard';
- import { AuthorizationGuard } from '../auth/guards/authorization.guard';
+ import { AuthorizationGuard } from '../auth/guards/authorization.gaurd';
  import { Roles } from '../auth/decorators/roles.decorator';
  import { Role } from '../auth/decorators/roles.decorator';
 
