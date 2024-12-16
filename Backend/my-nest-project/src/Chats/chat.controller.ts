@@ -3,8 +3,8 @@ import { ChatService } from './chat.service';
 import { CreateChatDto} from '../Chats/dto/create-chat.dto';
 import{ UpdateChatDto } from '../Chats/dto/update-chat.dto';
 import { Chat } from '../Chats/models/chat.schema';
-import { Message } from '../messages/models/messeageSchema'
-import { CreateMessageDto } from 'src/messages/dto/create-message.dto';
+import { ChatMessage } from '../chatMessages/models/chatMessages.schema'
+//import { CreateMessageDto } from 'src/messages/dto/create-message.dto';
 import { Role, Roles } from '../auth/decorators/roles.decorator';
  import { Public} from '../auth/decorators/public.decorator';
  import { AuthorizationGuard } from '../auth/guards/authorization.gaurd';
@@ -62,15 +62,15 @@ export class ChatController {
     return this.chatService.deleteChat(id);
   }
 
-  @Post(':chatId/messages')
-  @Roles(Role.Student, Role.Instructor) // Students and instructors can add messages to chats
+  // @Post(':chatId/messages')
+  // @Roles(Role.Student, Role.Instructor) // Students and instructors can add messages to chats
 
-  async addMessage(
-    @Param('chatId') chatId: string,
-    @Body() createMessageDto: CreateMessageDto,
-  ): Promise<Message> {
-    return this.chatService.addMessage(chatId, createMessageDto.senderId, createMessageDto.content);
-  }
+  // async addMessage(
+  //   @Param('chatId') chatId: string,
+  //   @Body() createMessageDto: CreateMessageDto,
+  // ): Promise<Message> {
+  //   return this.chatService.addMessage(chatId, createMessageDto.senderId, createMessageDto.content);
+  // }
 
   @Get('search/:query')
 @Roles(Role.Student, Role.Instructor, Role.Admin) // All roles can search

@@ -6,7 +6,7 @@ import { Forum, ForumSchema } from './models/forums.schema';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: Forum.name, schema: ForumSchema }]),
+    MongooseModule.forFeature([{ name: Forum.name, schema: ForumSchema }],),
   ],
   controllers: [ForumController],
   providers: [ForumService],

@@ -29,12 +29,19 @@ import {
       const { chatId, senderId, content, date } = payload;
   
       // Save message to database
-      const newMessage = await this.chatMessageService.createChatMessage({
-        chatId,
-        senderId,
-        content,
-        date: new Date(date),
-      });
+      // const newMessage = await this.chatMessageService.createMessage({
+      //   chatId,
+      //   senderId,
+      //   content,
+      //   date: new Date(date),
+      // });
+
+      // Save message to database
+const newMessage = await this.chatMessageService.createMessage(chatId, senderId, content);
+
+// Broadcast the message to all connected clients
+this.server.emit('receiveMessage', newMessage);
+
   
       // Broadcast the message to all connected clients
       this.server.emit('receiveMessage', newMessage);

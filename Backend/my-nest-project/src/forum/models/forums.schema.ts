@@ -1,17 +1,29 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import mongoose from 'mongoose';
 import { Document } from 'mongoose';
-import { ThreadSchema, Thread } from 'src/Threads/models/Thread.schema';
+
+
 @Schema()
-export class Forum {
-  @Prop({ type: [ThreadSchema], default: [] })
-  threads: Thread[];
+export class Forum extends Document {
 
-  @Prop({ required: true })
-  courseId: string;
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+  })
+  courseId: mongoose.Types.ObjectId;
 
-  @Prop({ required: true })
-  instructorId: string;
+  @Prop({
+    type: [{ type: mongoose.Schema.Types.ObjectId }],
+    required: true,
+  })
+  threads: mongoose.Types.ObjectId[];
+
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+  })
+  instructorId: mongoose.Types.ObjectId;
 }
+;
 
-export type ForumDocument = Forum & Document;
 export const ForumSchema = SchemaFactory.createForClass(Forum);
