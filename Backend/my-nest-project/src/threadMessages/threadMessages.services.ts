@@ -2,7 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ThreadMessage, ThreadMessageDocument } from './models/threadMessages.schema';
-import { Thread } from '../Threads/models/Thread.schema';
+import { Thread} from 'src/thread/models/threads.schema'
+
  @Injectable()
  export class ThreadMessageService {
   constructor(@InjectModel(ThreadMessage.name) private threadMessageModel: Model<ThreadMessageDocument>,

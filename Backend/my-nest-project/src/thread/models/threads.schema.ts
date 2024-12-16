@@ -1,15 +1,20 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
-import { ThreadMessageSchema, ThreadMessage } from 'src/threadMessages/models/threadMessages.schema';
-
+import mongoose from 'mongoose';
+import  {Document} from 'mongoose';
+import { ForumModule } from 'src/forum/forum.module'; // Import ForumModule
 @Schema()
-export class Thread {
+export class Thread extends Document {
+  // static deleteMany(arg0: { _id: { $in: any; }; }) {
+  //   throw new Error('Method not implemented.');
+  // }
   @Prop({ required: true })
   title: string;
 
-  @Prop({ type: [ThreadMessageSchema], default: [] })
-  messages: ThreadMessage[];
+  @Prop({
+    type: [{ type: mongoose.Schema.Types.ObjectId }],
+    required: true,
+  })
+  messages: mongoose.Types.ObjectId[];
 }
 
-export type ThreadDocument = Thread & Document;
 export const ThreadSchema = SchemaFactory.createForClass(Thread);

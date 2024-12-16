@@ -1,4 +1,12 @@
-// create-thread.dto.ts
+import { IsString, IsArray} from 'class-validator';
+
 export class CreateThreadDto {
-    title: string;
-  }
+  @IsString()
+   title: string;
+
+  @IsArray()
+  @IsString({ each: true })
+   messages: string[]=[];
+
+   //content: string;
+}
