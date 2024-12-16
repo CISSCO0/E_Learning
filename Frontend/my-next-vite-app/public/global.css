@@ -1,0 +1,136 @@
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Header Styling */
+.header {
+  position: fixed;
+  background-color: rgba(20, 20, 20, 0.7);
+  width: 100%;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  top: 0;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+  z-index: 100;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+/* Menu Icon (For Sidebar) */
+.menu-icon {
+  font-size: 24px;
+  cursor: pointer;
+  margin-right: 20px;
+  z-index: 120;
+}
+
+/* Search Bar */
+.search-bar {
+  display: flex;
+  align-items: center;
+  background-color: white;
+  padding: 10px 20px;
+  border-radius: 25px;
+  width: 60%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.search-input {
+  border: none;
+  background: transparent;
+  color: black;
+  width: 100%;
+  font-size: 18px;
+}
+
+.search-input:focus {
+  outline: none;
+  border: none;
+}
+
+/* Bell Icon */
+.bell-icon {
+  font-size: 24px;
+  cursor: pointer;
+  transition: color 0.3s;
+  margin-right: 25px;
+}
+
+.bell-icon:hover {
+  color: #f0a500;
+}
+
+/* Dropdown Menu */
+.dropdown {
+  position: absolute;
+  top: 40px;
+  right: 20px;
+  background-color: #34495e;
+  color: white;
+  list-style: none;
+  padding: 10px 0;
+  border-radius: 5px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  transform: translateY(-10px);
+  z-index: 129;
+  transition: all 0.3s ease-in-out;
+
+}
+
+.dropdown li {
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.dropdown li:hover {
+  background-color: #1abc9c;
+}
+
+/* Sidebar from Left to Right */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -250px; /* Initially hidden off the left side */
+  width: 250px;
+  height: 100%;
+  background-color: #34495e;
+  color: white;
+  transition: left 0.3s ease-in-out;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+  padding-top: 50px;
+}
+
+.sidebar.visible {
+  left: 0; /* Slide in when visible class is added */
+}
+
+.sidebar ul {
+  padding: 20px;
+  list-style: none;
+}
+
+.sidebar li {
+  padding: 10px 0;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.sidebar li:hover {
+  background-color: #1abc9c;
+}
+
+/* Main Content */
+.content {
+  padding: 70px 20px; /* Adjust for fixed header */
+  margin-left: 20px;
+}
