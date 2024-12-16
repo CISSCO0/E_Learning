@@ -1,4 +1,13 @@
+import { IsArray, IsString } from 'class-validator';
+
 export class CreateForumDto {
-    courseId: string;
-    instructorId: string;
+  @IsString()
+  courseId: string;
+
+  @IsArray()
+  @IsString({ each: true })
+  threads: string[] = [];
+
+  @IsString()
+  instructorId: string
   }

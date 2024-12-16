@@ -1,5 +1,9 @@
+import { IsArray, IsString , IsOptional } from 'class-validator';
 
-// update-entity.dto.ts
-export class UpdateEntityDto {
-    [key: string]: any;
+export class UpdateforumDto {
+    @IsOptional()
+    key: string[] = [];
+
+    @IsArray()
+    threads ?: string[];
   }

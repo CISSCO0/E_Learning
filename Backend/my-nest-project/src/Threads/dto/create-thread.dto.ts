@@ -1,12 +1,12 @@
-import { IsString, IsArray, ArrayNotEmpty } from 'class-validator';
+import { IsString, IsArray} from 'class-validator';
 
 export class CreateThreadDto {
   @IsString()
    title: string;
 
   @IsArray()
-  @ArrayNotEmpty()
   @IsString({ each: true })
-   messages: string[];
-   content: string;
+   messages: string[]=[];
+
+   //content: string;
 }
