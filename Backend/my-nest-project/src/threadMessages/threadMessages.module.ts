@@ -3,8 +3,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ThreadMessageService } from './threadMessages.services';
 import { ThreadMessageController } from './threadMessages.controller';
 import { ThreadMessage, ThreadMessageSchema } from './models/threadMessages.schema';
-import { ThreadModule } from 'src/Threads/thread.module';
-import { Thread} from 'src/Threads/models/Thread.schema'
+import { ThreadModule } from '../thread/threads.module';
+import { Thread} from 'src/thread/models/threads.schema'
 
 @Module({
  imports: [

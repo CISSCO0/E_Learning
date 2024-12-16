@@ -18,11 +18,8 @@ import { ResourcesModule } from './resources/resources.module';
 import { StudentModule } from './student/student.module';
 import { UserModule } from './user/user.module';
 import { ThreadModule } from './thread/threads.module';
-import { MessageModule } from './messages/message.module';
 import { ForumModule } from './forum/forum.module';
 import { ChatModule } from './chat/chat.modules';
-import { ThreadMessage } from './threadMessages/models/threadMessages.schema';
-import { ChatMessage } from './chatMessages/models/chatMessages.schema';
 import { ThreadMessageModule } from './threadMessages/threadMessages.module';
 import { ChatMessageModule } from './chatMessages/chatMessages.module';
 import { ProgressModule } from './progress/progress.module';
@@ -66,11 +63,12 @@ import { BackupModule } from './backup/backup.module';
     UserModule,
     ThreadModule,
     ThreadMessageModule,
-    ChatModule,
+     ChatModule,
     ChatMessageModule,
-    ForumModule,
+     ForumModule,
     LogsModule,
-    BackupModule
+    BackupModule,
+    ProgressModule
   ],
   controllers: [AppController],  // Only AppController should be here
   providers: [AppService, BackupService],

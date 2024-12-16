@@ -8,6 +8,6 @@ export class CreateMessageDto {
   chatId: string;
 
   @IsString()
-    senderId: string;  // The ID of the user sending the message
+    senderId: string; // The ID of the user sending the message
   
 }
