@@ -23,36 +23,26 @@ export class LogsService {
   
 
 // Retrieve all logs with pagination
-async findAll(page: number = 1, limit: number = 10): Promise<Log[]> {
+async findAll(page: number = 1, limit: number = 10): Promise<{ data: Log[]; total: number }> {
   try {
-    // Validate page and limit parameters
-    if (page <= 0) {
-      page = 1; // Default to page 1 if page is invalid
-    }
-    if (limit <= 0) {
-      limit = 10; // Default to 10 items per page if limit is invalid
-    }
-
     const logs = await this.logModel
       .find()
-      .skip((page - 1) * limit) // Skip for pagination
-      .limit(limit) // Limit the number of records per page
+      .skip((page - 1) * limit)
+      .limit(limit)
       .exec();
-    
-    // Check if no logs are found
-    if (logs.length === 0) {
+
+    const total = await this.logModel.countDocuments();
+
+    if (!logs.length) {
       throw new NotFoundException('No logs found');
     }
 
-    return logs;
+    return { data: logs, total };
   } catch (error) {
-    // Handle errors and provide meaningful messages
-    if (error instanceof NotFoundException) {
-      throw error;
-    }
-    throw new BadRequestException('Failed to retrieve logs', error.message);
+    throw new BadRequestException('Failed to retrieve logs');
   }
 }
+
 
 
   // Retrieve a single log by ID

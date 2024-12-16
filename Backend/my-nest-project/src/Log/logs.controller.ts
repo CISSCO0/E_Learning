@@ -1,61 +1,79 @@
-import { Controller, Get, Post, Patch, Delete, Param, Body, Query, UseGuards, BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  Param,
+  Body,
+  Query,
+  UseGuards,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { LogsService } from './logs.service';
 import { CreateLogDto } from './dto/create-log.dto';
 import { UpdateLogDto } from './dto/update-log.dto';
-import { Log } from './models/logs.schema';
-// Comment out these imports to bypass authentication temporarily
- import { AuthGuard } from '../auth/guards/authentication.guard';
- import { AuthorizationGuard } from '../auth/guards/authorization.gaurd';
- import { Roles } from '../auth/decorators/roles.decorator';
- import { Role } from '../auth/decorators/roles.decorator';
+import { LoggerService } from '../logger/logger.service';
+import { AuthGuard } from '../auth/guards/authentication.guard';
+import { AuthorizationGuard } from '../auth/guards/authorization.gaurd';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { Role } from '../auth/decorators/roles.decorator';
 
 @Controller('logs')
-
- @UseGuards(AuthGuard, AuthorizationGuard)
- @Roles(Role.Admin) // Restrict to Admin role
+@UseGuards(AuthGuard, AuthorizationGuard)
+@Roles(Role.Admin) // Restrict to Admin role
 export class LogsController {
-  constructor(private readonly logsService: LogsService) {}
+  private readonly DEFAULT_PAGE = 1;
+  private readonly DEFAULT_LIMIT = 10;
+
+  constructor(
+    private readonly logsService: LogsService,
+    private readonly logger: LoggerService,
+  ) {}
 
   @Post()
   async create(@Body() createLogDto: CreateLogDto) {
+    this.logger.logInfo('Creating a new log');
     try {
-      return await this.logsService.create(createLogDto);
+      const createdLog = await this.logsService.create(createLogDto);
+      this.logger.logInfo(`Log created with ID: ${createdLog._id}`);
+      return createdLog;
     } catch (error) {
-      throw new BadRequestException('Failed to create log', error.message);
+      this.logger.logError('Failed to create log', error.message);
+      throw new BadRequestException('Failed to create log');
     }
   }
 
   @Get()
- @Roles(Role.Admin) // Only admins can view all logs
   async findAll(
-    @Query('page') page: string = '1',  // default to 1
-    @Query('limit') limit: string = '10' // default to 10
+    @Query('page') page: string = `${this.DEFAULT_PAGE}`,
+    @Query('limit') limit: string = `${this.DEFAULT_LIMIT}`,
   ) {
-    // Convert to integer to ensure correct type
+    this.logger.logInfo(`Fetching logs with page=${page} and limit=${limit}`);
     const pageNumber = parseInt(page, 10);
     const limitNumber = parseInt(limit, 10);
-  
-    // Validate the page and limit to be valid numbers
+
     if (isNaN(pageNumber) || isNaN(limitNumber)) {
       throw new BadRequestException('Page and limit must be valid numbers');
     }
-  
+
     try {
-      // Pass the parsed pageNumber and limitNumber to the service
       return await this.logsService.findAll(pageNumber, limitNumber);
     } catch (error) {
-      throw new BadRequestException('Failed to retrieve logs', error.message);
+      this.logger.logError('Failed to fetch logs', error.message);
+      throw new BadRequestException('Failed to retrieve logs');
     }
   }
-  
 
   @Get(':id')
-  @Roles(Role.Admin) // Only admins can view a specific log by ID
   async findOne(@Param('id') id: string) {
+    this.logger.logInfo(`Fetching log with ID: ${id}`);
     try {
       return await this.logsService.findOne(id);
     } catch (error) {
-      throw new NotFoundException(`Log with ID ${id} not found`, error.message);
+      this.logger.logError(`Log not found with ID: ${id}`, error.message);
+      throw new NotFoundException(`Log with ID ${id} not found`);
     }
   }
 
@@ -64,47 +82,23 @@ export class LogsController {
     if (id !== updateLogDto.id) {
       throw new BadRequestException('Log ID in the URL and body must match');
     }
+    this.logger.logInfo(`Updating log with ID: ${id}`);
     try {
       return await this.logsService.update(id, updateLogDto);
     } catch (error) {
-      throw new BadRequestException('Failed to update log', error.message);
+      this.logger.logError('Failed to update log', error.message);
+      throw new BadRequestException('Failed to update log');
     }
   }
 
   @Delete(':id')
-  @Roles(Role.Admin) // Restrict to Admin role
   async remove(@Param('id') id: string) {
+    this.logger.logInfo(`Deleting log with ID: ${id}`);
     try {
       return await this.logsService.remove(id);
     } catch (error) {
-      throw new NotFoundException(`Log with ID ${id} not found`, error.message);
+      this.logger.logError('Failed to delete log', error.message);
+      throw new NotFoundException(`Log with ID ${id} not found`);
     }
   }
-
-  /*@Get('search')
-  async searchLogs(@Query('key') key: string): Promise<Log[]> {
-    // Validate the query parameter
-    if (!key || key.trim() === '') {
-      throw new BadRequestException('The "key" query parameter is required and cannot be empty.');
-    }
-  
-    try {
-      // Call the service method
-      const results = await this.logsService.searchByKey(key);
-  
-      // Log the search operation for debugging
-      console.log(`Search performed with key: ${key}, found ${results.length} logs`);
-  
-      return results;
-    } catch (error) {
-      // Handle specific exceptions or fallback to a generic one
-      if (error instanceof NotFoundException) {
-        throw error; // Re-throw NotFoundException if no logs match
-      }
-      console.error('Search failed:', error);
-      throw new BadRequestException('An error occurred while searching logs', error.message);
-    }
-  }
-  */
 }
-

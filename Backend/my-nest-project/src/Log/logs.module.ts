@@ -4,6 +4,7 @@ import { LogsService } from './logs.service';
 import { LogsController } from './logs.controller';
 import { Log, LogSchema } from './models/logs.schema';
 import { JwtModule } from '@nestjs/jwt';  // Import JwtModule
+import { LoggerService } from '../logger/logger.service'; // Add this
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { JwtModule } from '@nestjs/jwt';  // Import JwtModule
     }),
   ],
   controllers: [LogsController],  // Register the controller
-  providers: [LogsService],      // Register the service
+  providers: [LogsService, LoggerService],// Register the service
+  exports: [LoggerService],      
 })
 export class LogsModule {}
