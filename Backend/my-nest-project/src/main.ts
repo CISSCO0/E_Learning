@@ -22,7 +22,7 @@ async function bootstrap(): Promise<void> {
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,   // Allow credentials (cookies, headers, etc.)
   });
-
+ 
   // MongoDB connection URI and port setup
   const mongoUri = process.env.MONGO_URI || 'mongodb+srv://clown:SE123@cluster1.llyk9cg.mongodb.net/E_Learning';
   const port = process.env.PORT || 3000;

@@ -18,16 +18,18 @@ import { StudentModule } from 'src/student/student.module';
   controllers: [CoursesController],
   providers: [
     CoursesService
-    ,
-    {
-      provide: APP_GUARD, 
-      useClass: AuthGuard,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: AuthorizationGuard, 
-    },
+
+    // ,
+    // {
+    //   provide: APP_GUARD, 
+    //   useClass: AuthGuard,
+    // },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: AuthorizationGuard, 
+    // },
   ],
   exports: [CoursesService],  
 })
 export class CourseModule {}
+
