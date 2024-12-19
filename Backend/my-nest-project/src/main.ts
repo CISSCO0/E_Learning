@@ -6,23 +6,29 @@ import * as dotenv from 'dotenv';
 import * as multer from 'multer';
 import { NestExpressApplication } from '@nestjs/platform-express'; // Correct import for Express Adapter
 import * as cookieParser from 'cookie-parser';
+import * as cors from 'cors';
 
 async function bootstrap(): Promise<void> {
   dotenv.config();
   
   // Create NestJS app with Express adapter
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-
   // Use cookie-parser to handle cookies
   app.use(cookieParser());
 
-  // Enable CORS for frontend access
   app.enableCors({
-    origin: process.env.CLIENT_URL || '*',   // Allow requests from the specified frontend URL
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true,   // Allow credentials (cookies, headers, etc.)
+    origin: true,  // Your frontend origin or specify exact origin (e.g., 'http://localhost:3000')
+    credentials: true, // Allow cookies to be sent/received
   });
-
+  
+  // // Logging middleware (should come after cookieParser and cors)
+  // app.use((req, res, next) => {
+  //   console.log('Incoming Request:');
+  //   console.log('Cookies:', req.cookies); // Logs cookies
+  //   console.log('Headers:', req.headers); // Logs headers
+  //   next();
+  // });
+  
   // MongoDB connection URI and port setup
   const mongoUri = process.env.MONGO_URI || 'mongodb+srv://clown:SE123@cluster1.llyk9cg.mongodb.net/E_Learning';
   const port = process.env.PORT || 3000;
