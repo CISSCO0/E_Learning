@@ -10,6 +10,7 @@ import { RegisterAdminDto } from './dto/RegisterAdminDto';
 import { RegisterInstructorDto } from './dto/RegisterInstructorDto';
 import { RegisterStudentDto } from './dto/RegisterStudentDto';
 import { Response } from 'express'; // Import Response from express
+import { parse } from 'cookie';
 @Injectable()
 export class AuthService {
   constructor(
@@ -29,7 +30,8 @@ export class AuthService {
   
     // Hash the password before saving
     const hashedPassword = await bcrypt.hash(registerDto.hash_pass, 10);
-    const newUser = { ...registerDto, hash_pass: hashedPassword };
+    const createtime = new Date();
+    const newUser = { ...registerDto, hash_pass: hashedPassword,createtime };
     
     // Create the user with the hashed password
     const user = await this.userService.createUser(newUser);
@@ -77,5 +79,23 @@ export class AuthService {
 
     return { access_token, payload }; // Return token and user info for the controller to set as cookie
   }
-  
+
+ /**
+   * Parses cookies from the request header
+   * @param cookieHeader - The `cookie` header from the request
+   * @returns Parsed cookies object
+   */
+ getCookies(cookieHeader: string): Record<string, string> {
+  if (!cookieHeader) return {};
+  return parse(cookieHeader);
+}
+
+/**
+ * Checks if a specific cookie exists
+ * @param cookies - Parsed cookies object
+ * @param key - The cookie key to check
+ */
+checkCookie(cookies: Record<string, string>, key: string): boolean {
+  return !!cookies[key];
+}
 }

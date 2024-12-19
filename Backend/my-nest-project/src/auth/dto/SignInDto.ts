@@ -7,5 +7,5 @@ export class SignInDto {
 
   @IsNotEmpty()
   @MinLength(3)
-  password: string; 
+  hash_pass: string; 
 }

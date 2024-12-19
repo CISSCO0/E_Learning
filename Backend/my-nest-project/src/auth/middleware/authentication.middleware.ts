@@ -1,21 +1,52 @@
-import { UnauthorizedException } from '@nestjs/common/exceptions/unauthorized.exception';
-import { Request, Response, NextFunction } from 'express';
-import { verify } from 'jsonwebtoken';
+
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { Request } from 'express';
 import * as dotenv from 'dotenv';
+import { Reflector } from '@nestjs/core';
+import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
 dotenv.config();
+@Injectable()
+export class AuthGuard implements CanActivate {
+  constructor(private jwtService: JwtService, private reflector: Reflector) {}
 
-export function AuthenticationMiddleware(req: Request, res: Response, next: NextFunction) {
-  const token = req.cookies?.token || req.headers['authorization']?.split(' ')[1];
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+    if (isPublic) {
+      return true;
+    }
 
-  if (!token) {
-    throw new UnauthorizedException('Authentication token missing');
+    const request = context.switchToHttp().getRequest<Request>();
+    const token = this.extractTokenFromHeader(request);
+
+    if (!token) {
+      throw new UnauthorizedException('No token, please login');
+    }
+
+    try {
+      const payload = await this.jwtService.verifyAsync(token, {
+        secret: process.env.JWT_SECRET,
+      });
+      request['user'] = payload; // Attach payload to request object
+    } catch {
+      throw new UnauthorizedException('Invalid token');
+    }
+
+    return true;
   }
 
-  try {
-    const decoded: any = verify(token, String(process.env.JWT_SECRET));
-    req['user'] = decoded.user; // Attach user payload to the request object
-    next(); 
-  } catch (err) {
-    throw new UnauthorizedException('Invalid or expired token');
+  private extractTokenFromHeader(request: Request): string | undefined {
+    console.log("ok")
+    // console.log('Cookies:', request.cookies); // Debug cookies
+    // console.log('Authorization:', request.headers['authorization']); // Debug Authorization header
+    return request.cookies?.CookieFromServer || request.headers['authorization']?.split(' ')[1];
   }
 }
