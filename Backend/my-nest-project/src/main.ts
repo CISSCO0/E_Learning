@@ -20,15 +20,7 @@ async function bootstrap(): Promise<void> {
     origin: true,  // Your frontend origin or specify exact origin (e.g., 'http://localhost:3000')
     credentials: true, // Allow cookies to be sent/received
   });
-  
-  // // Logging middleware (should come after cookieParser and cors)
-  // app.use((req, res, next) => {
-  //   console.log('Incoming Request:');
-  //   console.log('Cookies:', req.cookies); // Logs cookies
-  //   console.log('Headers:', req.headers); // Logs headers
-  //   next();
-  // });
-  
+
   // MongoDB connection URI and port setup
   const mongoUri = process.env.MONGO_URI || 'mongodb+srv://clown:SE123@cluster1.llyk9cg.mongodb.net/E_Learning';
   const port = process.env.PORT || 3000;
