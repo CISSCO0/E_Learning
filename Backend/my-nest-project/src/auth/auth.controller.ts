@@ -1,4 +1,4 @@
-import { Body, Controller, HttpStatus, Post, HttpException, Res } from '@nestjs/common';
+import { Body, Controller, HttpStatus, Post, HttpException, Res, UseGuards, Get, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterRequestDto } from './dto/RegisterRequestDto';
 import { RegisterAdminDto } from './dto/RegisterAdminDto';
@@ -7,18 +7,61 @@ import { RegisterStudentDto } from './dto/RegisterStudentDto';
 import { SignInDto } from './dto/SignInDto';
 import { Response } from 'express'; // Make sure you import this
 import { JwtService } from '@nestjs/jwt';  // Import the JwtService
-
+import { AuthGuard } from './guards/authentication.guard';
+import { AuthorizationGuard } from './guards/authorization.gaurd';
+import { Roles } from './decorators/roles.decorator';
+import { Public } from './decorators/public.decorator';
+import { Request } from 'express';
+import * as dotenv from 'dotenv';
+@UseGuards(AuthGuard, AuthorizationGuard)
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService,
     private readonly jwtService: JwtService
   ) {}
 
-  @Post('login')
-  async signIn(@Body() signInDto: SignInDto, @Res({ passthrough: true }) res: Response) {
+  @Get('check-token')
+  @Public()
+  async checkToken(@Req() req: Request, @Res() res: Response) {
     try {
-      const result = await this.authService.signIn(signInDto.email, signInDto.password);
-  
+      // Step 1: Parse cookies from the request
+      const cookies = this.authService.getCookies(req.headers.cookie || '');
+
+      // Step 2: Check if the token cookie exists
+      if (this.authService.checkCookie(cookies, 'token')) {
+        const token = cookies['token'];
+
+        // Optionally verify the token (if you want to decode it or ensure validity)
+        const decoded = await this.jwtService.verifyAsync(token);
+
+        return res.status(HttpStatus.OK).json({
+          message: 'Token is valid',
+          token,
+          decoded, // Optional: Return the decoded payload for reference
+        });
+      }
+
+      // If no token is found
+      return res.status(HttpStatus.UNAUTHORIZED).json({
+        message: 'No token found',
+      });
+    } catch (error) {
+      // Handle invalid or expired tokens
+      return res.status(HttpStatus.UNAUTHORIZED).json({
+        message: 'Invalid or expired token',
+        error: error.message,
+      });
+    }
+  }
+  @Post('login')
+  @Public()
+  async signIn(@Body() signInDto: SignInDto, @Res({ passthrough: true }) res: Response) {
+    dotenv.config();
+    
+    try {
+      const result = await this.authService.signIn(signInDto.email, signInDto.hash_pass);
+      
+      //console.log(result.payload);
       // Role mapping logic
       let role: string;
       switch (result.payload.role) {
@@ -34,17 +77,24 @@ export class AuthController {
         default:
           role = 'guest'; // Or handle the case when role is not recognized
       }
-  
+
       // Now, include the mapped role in the payload for the JWT
       const payload = { userid: result.payload.userid, role: role };
-  
-      // Set JWT token in a cookie
-      res.cookie('token', await this.jwtService.signAsync(payload), {
-        httpOnly: true,   // Ensures the cookie can't be accessed via JavaScript
-        secure: process.env.NODE_ENV === 'production', // Use HTTPS in production
-        maxAge: 3600 * 1000, // 1 hour
+
+      const token = await this.jwtService.signAsync(payload);
+      //console.log(token);
+      // Set the JWT token as a cookie
+      res.cookie('token', token, {
+        httpOnly: true, // Prevents client-side access to the cookie
+        secure: false,  // Set to true for HTTPS
+        sameSite: 'lax', // Adjust based on your CORS strategy
       });
-  
+      // console.log('Response Headers After Setting Cookie:', res.getHeaders());
+
+
+      res.setHeader('authorization', `Bearer ${token}`);
+     // const cookiesSet = res.getHeaders();
+      //console.log('Cookies Set in Response:', cookiesSet);
       return {
         statusCode: HttpStatus.OK,
         message: 'Login successful',
@@ -59,9 +109,34 @@ export class AuthController {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
-  
+    
   }
+
+  // @Post('protected')
+  // async protected(@Request() req) {
+  //   // Check if cookies are being sent
+  //   console.log('Cookies:', req.cookies); // Log cookies to see if 'token' is present
+
+  //   // Access the cookie from the request
+  //   const token = req.cookies['token']; // Get the token cookie
+  //   if (!token) {
+  //     throw new HttpException(
+  //       { statusCode: HttpStatus.UNAUTHORIZED, message: 'No token found' },
+  //       HttpStatus.UNAUTHORIZED,
+  //     );
+  //   }
+
+  //   // You can also verify the token here, if needed
+  //   const payload = await this.jwtService.verifyAsync(token);
+  //   return {
+  //     statusCode: HttpStatus.OK,
+  //     message: 'Token is valid',
+  //     payload,
+  //   };
+  // }
+
   @Post('register')
+  @Public()
   async register(@Body() registerDto: RegisterRequestDto) {
     try {
       // Register as basic user first

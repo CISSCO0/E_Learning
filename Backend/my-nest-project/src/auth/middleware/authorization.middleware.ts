@@ -22,7 +22,7 @@ export const isUserAuthorized = (roles: string[]) => {
     if (!roles.includes(user.role)) {
       throw new UnauthorizedException('User does not have the required role');
     }
-
+ 
     next(); // User is authorized, continue to the next middleware/handler
   };
 };
