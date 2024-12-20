@@ -3,19 +3,20 @@ import { Document } from 'mongoose';
 
 @Schema()
 export class Question extends Document {
+  @Prop({ required: true })
+  level: string;
 
   @Prop({ required: true })
-  answer: string; 
+  type: string; // e.g., 'mcq' or 'true/false'
 
   @Prop({ required: true })
-  level: string; 
+  content: string; // The question text
+
+  @Prop({ type: [String], required: function() { return this.type === 'mcq'; } })
+  possibleAnswers?: string[]; // Array of possible answers for MCQ
 
   @Prop({ required: true })
-  type: string; 
-
-  @Prop({ required: true })
-  content: string; 
- 
+  correctAnswer: string; // The correct answer
 }
 
 export const QuestionSchema = SchemaFactory.createForClass(Question);

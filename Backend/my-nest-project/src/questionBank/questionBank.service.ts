@@ -24,8 +24,8 @@ export class QuestionBankService {
   }
 
   // Get question bank by module ID
-  async getQuestionBankByModuleId(moduleId: string): Promise<QuestionBank> {
-    const questionBank = await this.questionBankModel.findOne({ moduleId }).exec();
+  async getQuestionBankByModuleId(module_id: string): Promise<QuestionBank> {
+    const questionBank = await this.questionBankModel.findOne({ module_id }).exec();
     if (!questionBank) {
       throw new NotFoundException('Question bank not found');
     }

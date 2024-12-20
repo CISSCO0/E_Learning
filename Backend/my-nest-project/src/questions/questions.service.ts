@@ -25,10 +25,33 @@ export class QuestionsService {
   }
 
   // Create a new question
-  async createQuestion(createQuestionDto: CreateQuestionDto): Promise<Question> {
-    const newQuestion = new this.questionModel(createQuestionDto);
-    return await newQuestion.save();
+ // Create a new question
+async createQuestion(createQuestionDto: CreateQuestionDto): Promise<Question> {
+  if (createQuestionDto.type === 'mcq' && (!createQuestionDto.possibleAnswers || createQuestionDto.possibleAnswers.length < 2)) {
+    throw new Error('MCQ questions must have at least two possible answers.');
   }
+
+  const newQuestion = new this.questionModel(createQuestionDto);
+  return await newQuestion.save();
+}
+
+// Update a question by ID
+async updateQuestionById(
+  questionId: string,
+  updateQuestionDto: UpdateQuestionDto,
+): Promise<Question> {
+  if (updateQuestionDto.type === 'mcq' && (!updateQuestionDto.possibleAnswers || updateQuestionDto.possibleAnswers.length < 2)) {
+    throw new Error('MCQ questions must have at least two possible answers.');
+  }
+
+  const updatedQuestion = await this.questionModel
+    .findByIdAndUpdate(questionId, updateQuestionDto, { new: true })
+    .exec();
+  if (!updatedQuestion) {
+    throw new NotFoundException('Question not found');
+  }
+  return updatedQuestion;
+}
 
   // Delete a question and associated responses
   async deleteQuestionById(questionId: string): Promise<void> {
@@ -57,16 +80,5 @@ export class QuestionsService {
   }
 
   // Update a question by ID
-  async updateQuestionById(
-    questionId: string,
-    updateQuestionDto: UpdateQuestionDto,
-  ): Promise<Question> {
-    const updatedQuestion = await this.questionModel
-      .findByIdAndUpdate(questionId, updateQuestionDto, { new: true })
-      .exec();
-    if (!updatedQuestion) {
-      throw new NotFoundException('Question not found');
-    }
-    return updatedQuestion;
-  }
+ 
 }
