@@ -12,9 +12,7 @@ import { Response } from 'express';
  @UseGuards(AuthGuard)
 export class ProgressController {
   constructor(private readonly progressService: ProgressService) {}
-    // Register progress for a course\
-    @Post('/enroll')
-    @Roles(Role.Student)
+    // Register progress for a course
     async registerCourse(@Body() createProgressDto: CreateProgressDto) {
       return this.progressService.registerCourse(createProgressDto);
     }
@@ -24,22 +22,15 @@ export class ProgressController {
   async createProgress(@Body() createProgressDto: CreateProgressDto) {
     return await this.progressService.create(createProgressDto);
   }
-  @Get(':userId/:courseId/final-grade')
-  @Public()
-  async getFinalGrade(
-    @Param('userId') userId: string,
-    @Param('courseId') courseId: string,
-  ) {
 
-    const finalGrade = await this.progressService.calculateFinalGrade(userId, courseId);
-    return { finalGrade };
-   }
    // GET All Progress
    @Get()
+   @Roles(Role.Instructor)
    async getAllProgress() {
      return await this.progressService.findAll();
    }
    
+
    @Get('quiz-results/')
    async getAllProgressReport(@Res() res: Response) {
     try {
@@ -47,7 +38,7 @@ export class ProgressController {
       const reportFilePath = await this.progressService.generateAllProgressReport();
   console.log(reportFilePath)
       // Send the report as a downloadable file
-      res.download(reportFilePath, `progress_report.csv`, (err) => {
+      res.download(reportFilePath,`progress_report.csv`, (err) => {
         if (err) {
           res.status(500).send('Error downloading the report');
         }
@@ -60,7 +51,15 @@ export class ProgressController {
       res.status(404).json({ message: error.message });
     }
   }
- 
+
+
+  @Get('course-completion/')
+  async generateCourseCompletionReport(@Res() response: Response) {
+    const filePath = await this.progressService.generateCourseCompletionReport();
+    response.download(filePath); // Sends the file as a download
+  }
+
+
    // GET by ID
    @Get(':id')
    @Public()
@@ -94,13 +93,12 @@ export class ProgressController {
    @Delete(':id')
  @Roles(Role.Instructor)
   @Roles(Role.Admin)
-    @Roles(Role.Admin)
    async deleteProgress(@Param('id') id: string) {
      const deletedProgress = await this.progressService.deleteById(id);
      if (!deletedProgress) {
        throw new NotFoundException(`Progress with ID ${id} not found`);
      }
-     return { message: `Progress with ID ${id} has been deleted` };
+     return { message: `Progress with ID ${id} has been deleted `};
    }
  
    @Get(':userId/:courseId')
@@ -121,6 +119,18 @@ export class ProgressController {
    ) {
      return this.progressService.completeModule(userId, moduleId);
    }
+   @Get(':userId/:courseId/final-grade')
+   @Public()
+   async getFinalGrade(
+     @Param('userId') userId: string,
+     @Param('courseId') courseId: string,
+   ) {
+  //  console.log(userId + " " + courseId)
+     const finalGrade = await this.progressService.calculateFinalGrade(userId, courseId);
+     return { finalGrade };
+   }
+
+
+  
   
 }
-

@@ -102,6 +102,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <li><a onClick={() => navigateTo('/')}>Home</a></li>
               <li><a onClick={() => navigateTo('/courses')}>Courses</a></li>
               <li><a onClick={handleNotificationClick}>Notification</a></li>
+              <li><a onClick={() => navigateTo('/reports')}>Reports</a></li>
             </ul>
           </div>
         </div>

@@ -7,6 +7,8 @@ import { Module } from '../moduleInterface';
 import { UpdateCourseDto } from '../updatecourseInterface';
 import axios from 'axios';
 import Link from 'next/link';
+import router from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 interface Student{
     _id : string;
@@ -14,6 +16,7 @@ interface Student{
 }
 
 export default function CoursePage({ params }: { params: Promise<{ courseid: string }> }) {
+  const router = useRouter()
   const [courseid, setCourseId] = useState<string | null>(null);
   const [course, setCourse] = useState<Course | null>(null);
   const [modules, setModules] = useState<Module[]>([]);
@@ -287,7 +290,9 @@ const handleRatingSubmit = async (e: React.FormEvent) => {
   const [downloadLink, setDownloadLink] = useState(null);
 
  
-
+  const navigateToChats = () => {
+    router.push(`/courses/${courseid}/chats`);
+  };
   if (!course) return <div>Loading...</div>;
 
   return (
@@ -411,7 +416,9 @@ const handleRatingSubmit = async (e: React.FormEvent) => {
           <li key={student._id}>{student.name}</li> // You can display other student details here
         ))}
       </ul>
-
+      <button className="sort-button" onClick={() => navigateToChats()}>
+        Chats
+      </button>
       <button className="delete-button" onClick={handleDeleteCourse}>
         Delete Course
       </button>

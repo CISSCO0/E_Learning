@@ -1,0 +1,138 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+  }
+
+  .body{
+    background: linear-gradient(135deg, #f0f4f8, #e0e8f0);
+  }
+  .report-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #f0f4f8, #e0e8f0);
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    color: #2c3e50;
+  }
+  
+  .report-title {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    color: #2c3e50;
+  }
+  
+  .report-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  .report-button {
+    padding: 12px 20px;
+    border-radius: 5px;
+    color: white;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    text-align: center;
+  }
+  
+  .report-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .report-button.blue {
+    background: linear-gradient(to right, #3498db, #2980b9);
+  }
+  
+  .report-button.green {
+    background: linear-gradient(to right, #2ecc71, #27ae60);
+  }
+  
+  .report-button.purple {
+    background: linear-gradient(to right, #9b59b6, #8e44ad);
+  }
+  
+  .report-button.teal {
+    background: linear-gradient(to right, #1abc9c, #16a085);
+  }
+  
+  .report-button.disabled {
+    background: #bdc3c7;
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+  
+  .error-message {
+    color: #e74c3c;
+    margin-top: 20px;
+    font-weight: bold;
+  }
+  
+  .report-data {
+    margin-top: 40px;
+    width: 100%;
+    max-width: 800px;
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .data-title {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #2c3e50;
+  }
+  
+  .data-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+  
+  .data-table th,
+  .data-table td {
+    border: 1px solid #e0e8f0;
+    padding: 10px;
+    text-align: left;
+  }
+  
+  .data-table th {
+    background-color: #34495e;
+    color: white;
+    font-weight: bold;
+  }
+  
+  .data-table tr:nth-child(even) {
+    background-color: #f8f9fa;
+  }
+  
+  .pagination {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .pagination button {
+    padding: 8px 15px;
+  }
+  
+  .pagination span {
+    font-weight: bold;
+    color: #2c3e50;
+  }
+  
+  

@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException,Res } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Progress } from './models/progress.schema';
@@ -7,16 +7,15 @@ import { Modules} from '../modules/models/modules.schema';
 import { UpdateProgressDto } from './dto/update.dto';
 import {CreateProgressDto} from './dto/create.dto'
 import { StudentModule } from 'src/student/student.module';
-import { Courses } from 'src/courses/models/courses.schema';
 import * as fs from 'fs';
 import * as path from 'path';
+import { response } from 'express';
 @Injectable()
 export class ProgressService {
   constructor(
     @InjectModel(Progress.name) private progressModel: Model<Progress>,
     @InjectModel(Student.name) private studentModel: Model<Student>,
     @InjectModel(Modules.name) private modulesModel: Model<Modules>,
-    @InjectModel(Courses.name) private courseModel: Model<Courses>,
   ) {}
   //needs to be revised 
   async registerCourse(createProgressDto: CreateProgressDto) {
@@ -39,8 +38,8 @@ export class ProgressService {
     if (student.enrolled_courses.includes(course_id)) {
       throw new BadRequestException('Student is already enrolled in this course');
     }
-   const course = await this.courseModel.findById(course_id)
-    //student.instructors.push(course.created_by);
+  
+
     student.enrolled_courses.push(course_id);
       // Create a new progress entry for the student
       const newProgress = new this.progressModel({
@@ -61,7 +60,6 @@ export class ProgressService {
     return newProgress;
   }
   
-
 
   async completeModule(userId: string, moduleId: string): Promise<Progress> {
     //asheel course mn enrolled courses  kman  
@@ -134,61 +132,47 @@ export class ProgressService {
         return this.progressModel.findByIdAndDelete(id).exec();
         
       }
-
-      private letterGradeMapping = {
-        4.0: 'A',
-        3.0: 'B',
-        2.0: 'C',
-        1.0: 'D',
-        0.0: 'F',
-      };
-      
-      async calculateFinalGrade(userId: string, courseId: string): Promise<string> {
-        const progress = await this.progressModel.findOne({ user_id: userId, course_id: courseId });
-        console.log(progress);
-        if (!progress) {
-          return
-        }
     
-        const grades = progress.performance;
-    
-        // if (grades.length === 0) {
-        //     throw new Error('No performance grades found for this user.');
-        // }
-    
-        // Calculate the GPA/average based on the grades
-        let totalGradePoints = 0;
-        for (let grade of grades) {
-            // Convert grade to number if it's a string
-            const numericGrade = Number(grade); // Converts to number
-    
-            if (isNaN(numericGrade)) {
-                throw new Error(`Invalid grade value: ${grade}`); // Handle invalid numeric values
-            }
-    
-            totalGradePoints += numericGrade;
-        }
-    
-        const finalGPA = totalGradePoints / grades.length;
-    
-        // Map the GPA to the corresponding letter grade
-        let letterGrade = '';
-        if (finalGPA >= 90) {
-            letterGrade = 'A';
-        } else if (finalGPA >= 80) {
-            letterGrade = 'B';
-        } else if (finalGPA >= 60) {
-            letterGrade = 'C';
-        } else if (finalGPA >= 40) {
-            letterGrade = 'D';
-        } else {
-            letterGrade = 'F';
-        }
-    
-        // Return the final letter grade
-        return letterGrade;
+  // Calculate the final grade (GPA and corresponding letter grade)
+  async calculateFinalGrade(userId: string, courseId: string): Promise<string> {
+    const progress = await this.progressModel.findOne({ user_id: userId, course_id: courseId });
+    if (!progress) {
+      throw new NotFoundException('Progress not found for the specified user and course');
     }
-async generateAllProgressReport(): Promise<string> {
+
+    const grades = progress.performance;
+
+    // if (grades.length === 0) {
+    //   throw new Error('No performance grades found for this user.');
+    // }
+
+    let totalGradePoints = 0;
+    for (let grade of grades) {
+      const numericGrade = Number(grade); // Converts to number
+      if (isNaN(numericGrade)) {
+        throw new Error(`Invalid grade value: ${grade}`);
+      }
+      totalGradePoints += numericGrade;
+    }
+
+    const finalGPA = totalGradePoints / grades.length;
+
+    let letterGrade = '';
+    if (finalGPA >= 90) {
+      letterGrade = 'A';
+    } else if (finalGPA >= 80) {
+      letterGrade = 'B';
+    } else if (finalGPA >= 60) {
+      letterGrade = 'C';
+    } else if (finalGPA >= 40) {
+      letterGrade = 'D';
+    } else {
+      letterGrade = 'F';
+    }
+
+    return letterGrade;
+  }// Generate the report for quiz results, including performance categories
+  async generateAllProgressReport(): Promise<string> {
     // Fetch all progress rows from the database
     const allProgress = await this.progressModel.find().exec();
   
@@ -224,8 +208,9 @@ async generateAllProgressReport(): Promise<string> {
   
     return reportFilePath; // Return the file path for download
   }
-   // Helper function to calculate final grade from performance
-   private calculateUserFinalGrade(performance: string[]): string {
+  
+  // Helper function to calculate final grade from performance
+  private calculateUserFinalGrade(performance: string[]): string {
     if (performance.length === 0) return 'F'; // Default to F if no grades exist
   
     const totalGradePoints = performance.reduce((sum, grade) => sum + Number(grade), 0);
@@ -259,4 +244,81 @@ async generateAllProgressReport(): Promise<string> {
   async deleteReportFile(filePath: string) {
     fs.unlinkSync(filePath);
   }
-}
+  async generateCourseCompletionReport(): Promise<string> {
+    try {
+      // Fetch the required data from the progress collection
+      const progressData = await this.progressModel.find({}, { course_id: 1, user_id: 1, completion_percentage: 1 });
+
+      if (!progressData || progressData.length === 0) {
+        throw new NotFoundException('No progress data found');
+      }
+
+      // Initialize containers for course completion data
+      const courseCompletionData: { [courseId: string]: { students: number; completed: number; details: string[] } } = {};
+
+      // Loop through the progress data and organize it by course
+      progressData.forEach((progress) => {
+        const courseId = progress.course_id.toString();
+        const userId = progress.user_id;
+        const completionRate = progress.completion_percentage;
+
+        // Initialize course data if not already present
+        if (!courseCompletionData[courseId]) {
+          courseCompletionData[courseId] = { students: 0, completed: 0, details: [] };
+        }
+
+        // Increment student count and completion count based on completion rate
+        courseCompletionData[courseId].students++;
+        if (completionRate === 100) {
+          courseCompletionData[courseId].completed++;
+        }
+
+        // Add the user details to the report (student ID, completion rate)
+        courseCompletionData[courseId].details.push(`${courseId}, ${userId}, ${completionRate}`);
+      });
+
+      // Prepare CSV content
+      const courseCompletionRows: string[] = [];
+      const courseSummaryRows: string[] = [];
+
+      // Prepare the details rows for each course
+      for (const [courseId, data] of Object.entries(courseCompletionData)) {
+        // Add course-specific details (student ID and completion rate)
+        courseCompletionRows.push(...data.details);
+
+        // Add a summary row with the course total information (students and completed)
+        courseSummaryRows.push(`${courseId}, ${data.students}, ${data.completed}`);
+      }
+
+      // Combine the headers and rows for the CSV file
+      const courseCompletionHeader = 'Course ID, Student ID, Completion Rate';
+      const courseSummaryHeader = 'Course ID, Total Students, Total Completed';
+
+      const csvString = [
+        courseCompletionHeader,
+        ...courseCompletionRows,
+        '',
+        courseSummaryHeader,
+        ...courseSummaryRows
+      ].join('\n');
+
+      // Ensure the reports directory exists
+      const reportDirectory = path.join(__dirname, '../reports');
+      if (!fs.existsSync(reportDirectory)) {
+        fs.mkdirSync(reportDirectory, { recursive: true });
+      }
+
+      // Define the file path where the report will be saved
+      const reportFilePath = path.join(reportDirectory, 'course_completion_report.csv');
+
+      // Write the CSV data to the file system
+      fs.writeFileSync(reportFilePath, csvString);
+
+      // Return the file path for download
+      return reportFilePath;
+
+    } catch (error) {
+      console.error('Error generating course completion report:', error);
+      throw new Error(`Failed to generate the report: ${error.message || error}`);
+    }
+  }}

@@ -20,7 +20,7 @@ export class ModulesService {
   async getModuleById(moduleId: string): Promise<Modules> {
     const module = await this.moduleModel.findById(moduleId).exec();
     if (!module) {
-      throw new NotFoundException(`Module with ID ${moduleId} not found`);
+      throw new NotFoundException("Module with ID ${moduleId} not found");
     }
     return module;
   }
@@ -58,5 +58,28 @@ export class ModulesService {
     });
   }
 
+  private calculateAverageRating(ratings: number[]): number {
+    const sum = ratings.reduce((acc, rating) => acc + rating, 0);
+    return sum / ratings.length;
+  }
+  
+  async updateRating(moduleId: string, newRating: number): Promise<Modules> {
+              const module = await this.moduleModel.findById(moduleId);
+              if (!module) {
+                throw new NotFoundException("Course with ID ${moduleId} not found");
+              }
+          
+              // Add the new rating to the ratings array
+              module.ratings.push(newRating);
+          
+              // Recalculate the average rating
+              const averageRating = this.calculateAverageRating(module.ratings);
+              
+              // Update the course with the new average rating
+              module.rating = averageRating;
+              await module.save();
+          
+              return module;
+  }
 
 }
