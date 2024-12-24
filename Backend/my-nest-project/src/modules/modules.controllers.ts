@@ -22,6 +22,7 @@ import { AuthorizationGuard } from '../auth/guards/authorization.gaurd';
     }
 
     @Get(':id')//done 
+    @Public()
     @HttpCode(HttpStatus.OK)
     async getModuleById(@Param('id') moduleId: string): Promise<Modules> {
       return this.modulesService.getModuleById(moduleId);

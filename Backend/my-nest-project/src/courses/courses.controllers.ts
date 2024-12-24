@@ -1,5 +1,5 @@
 
-import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards , Query  } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards , Query, Res  } from '@nestjs/common';
 import { CoursesService } from './courses.services';
 import { Courses } from './models/courses.schema';
 import { CreateCourseDto } from './dto/create.course.dto';
@@ -9,6 +9,7 @@ import { Role, Roles } from '../auth/decorators/roles.decorator';
 import { Public} from '../auth/decorators/public.decorator';
 import { AuthorizationGuard } from '../auth/guards/authorization.gaurd';
 import { AuthGuard} from '../auth/guards/authentication.guard';
+import { Response } from 'express';
  @Controller('courses')
 // @UseGuards(AuthorizationGuard)
 // @UseGuards(AuthGuard)
@@ -23,6 +24,30 @@ export class CoursesController {
   @HttpCode(HttpStatus.CREATED) // 201: Resource successfully created
   async create(@Body() createCourseDto: CreateCourseDto): Promise<Courses> {
     return this.courseService.create(createCourseDto);
+  }
+
+
+  @Get('/report/')
+  async getAllCoursesAnalytics(@Res() res: Response) {
+    try {
+      console.log("menna2")
+      // Generate the report for all courses and get the file path
+      const reportFilePath = await this.courseService.generateAllCoursesReport();
+   console.log(reportFilePath);
+      // Send the report as a downloadable file
+      res.download(reportFilePath, 'all_courses_analytics_report.csv', (err) => {
+        if (err) {
+          res.status(500).send('Error downloading the report');
+        }
+  
+        // Clean up the file after download
+  
+        this.courseService.deleteReportFile(reportFilePath);
+      });
+    } catch (error) {
+      // Handle errors (e.g., no courses or modules found)
+      res.status(404).json({ message: error.message });
+    }
   }
 
   // Update a Course 
@@ -86,11 +111,25 @@ export class CoursesController {
   @Get('searchpublic')
   async searchCoursesPublic(@Query('keywords') keywords: string): Promise<Courses[]> {
       // Convert comma-separated string to an array
+    
       const keywordArray = keywords.split(',').map(keyword => keyword.toLowerCase());
-  
+
       return this.courseService.searchByKeywords(keywordArray);
   }
-  
+  @Get('/chats/:courseId')
+  async getChats(@Param('courseId') courseId: string): Promise<(string | object)[]> {
+    try {
+      // Call the service to fetch the instructor and students
+      return await this.courseService.chats(courseId);
+    } catch (error) {
+      // Handle errors appropriately
+      throw error;
+    }
+  }
+  @Get('students/:courseId')
+  async getStudentsByCourse(@Param('courseId') courseId: string) {
+    return this.courseService.getStudentsByCourse(courseId);
+   }
 
   // Search Courses by Keywords for Instructors/Admins
   @Get('search')
@@ -118,4 +157,13 @@ export class CoursesController {
    async getCourseById(@Param('courseId') courseId: string): Promise<Courses> {
      return this.courseService.getCourseById(courseId);
    }
+   @Get('instructor/:instructorId')
+   async getCoursesByInstructorId(@Param('instructorId') instructorId: string) {
+     const courses = await this.courseService.findByInstructorId(instructorId);
+    //  if (!courses || courses.length === 0) {
+    //    throw new NotFoundException(`No courses found for instructor ID ${instructorId}`);
+    //  }
+     return courses;
+   }
+
 }

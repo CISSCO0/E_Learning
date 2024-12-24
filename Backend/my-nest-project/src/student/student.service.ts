@@ -44,5 +44,7 @@ export class StudentService {
     return this.studentModel.findByIdAndDelete(id).exec();
   }
 // ======================================================================
-  
+  async findByUserId(userId: string): Promise<Student | null> {
+    return this.studentModel.findOne({ user_id: userId }).exec();
+  }
 }

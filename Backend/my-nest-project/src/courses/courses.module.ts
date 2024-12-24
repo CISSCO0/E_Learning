@@ -8,28 +8,30 @@ import { AuthGuard} from '../auth/guards/authentication.guard';
 import { APP_GUARD } from '@nestjs/core';
 import { ModulesModule } from 'src/modules/modules.module';
 import { StudentModule } from 'src/student/student.module';
+import { Instructor } from 'src/instructor/models/instructorSchema';
+import { InstructorModule } from 'src/instructor/instructor.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Courses.name, schema: CoursesSchema }]),
     forwardRef(() => ModulesModule),
    forwardRef(() => StudentModule),
+  forwardRef(()=> InstructorModule)
   ],
   controllers: [CoursesController],
   providers: [
     CoursesService
 
-    // ,
-    // {
-    //   provide: APP_GUARD, 
-    //   useClass: AuthGuard,
-    // },
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: AuthorizationGuard, 
-    // },
+    ,
+    {
+      provide: APP_GUARD, 
+      useClass: AuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: AuthorizationGuard, 
+    },
   ],
-  exports: [CoursesService],  
+  exports: [CoursesService,MongooseModule],  
 })
 export class CourseModule {}
-

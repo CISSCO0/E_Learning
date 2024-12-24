@@ -1,5 +1,6 @@
 export class CreateChatDto {
-    users: string[];
-    content: string;
-    date: Date;
-  }
+  users: string[];
+  title: string;
+  date: Date;
+  courseId: string;
+}

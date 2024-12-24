@@ -7,14 +7,17 @@ export class Chat {
   @Prop({ type: [String], required: true })
   users: string[];
 
-  @Prop({ type: [ChatMessageSchema], default: [] })
+  @Prop({ type: [String], default: [] })
   messages: ChatMessage[];
 
   @Prop({ required: true })
-  content: string;
+  title: string;
 
   @Prop({ required: true })
   date: Date;
+
+  @Prop({ required: true })
+  courseId: string;
 }
 
 export type ChatDocument = Chat & Document;

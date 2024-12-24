@@ -46,7 +46,7 @@ export class StudentController {
   }
 
   // ======================================================================
-  @Roles(Role.Admin, Role.Instructor)
+  @Roles(Role.Admin, Role.Instructor,Role.Student)
   @Get(':id')
   async getStudentById(@Param('id') id: string): Promise<Student> {
     return this.studentService.getStudentById(id);
@@ -71,5 +71,10 @@ export class StudentController {
     return { message: 'Student deleted successfully' };
   }
   // ======================================================================
-  
+    @Get('/user/:userId')
+    async getStudentByUserId(@Param('userId') userId: string) {
+      const student = await this.studentService.findByUserId(userId);
+     
+      return student;
+    }
 }

@@ -13,7 +13,7 @@ export class Modules extends Document {
   @Prop({ type: String, required: true })
   content: string;
 
-  @Prop({ type: [{ type: Types.ObjectId, ref: 'Resource' }], required: false })
+  @Prop({ type: [{ type: Types.ObjectId }], required: false })
   resources: resource[];
 
   @Prop({ required: true, type: Number })

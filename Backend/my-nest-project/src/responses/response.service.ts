@@ -37,7 +37,7 @@ export class ResponsesService {
   // Get responses by quiz ID
   async getResponsesByQuizId(quiz_id: string): Promise<Response[]> {
     return await this.responseModel
-      .find({ quiz_id: new Types.ObjectId(quiz_id) })
+      .find({ quiz_id })
       .exec();
   }
 
@@ -90,7 +90,7 @@ async submitResponse(
   let score = 0;
   answers.forEach((response) => {
     const question = questions.find((q) => q._id.toString() === response.question_id);
-    if (question && question.answer === response.answer) {
+    if (question && question.correctAnswer === response.answer) {
       score ++; // Add points for the correct answer
     }
   });

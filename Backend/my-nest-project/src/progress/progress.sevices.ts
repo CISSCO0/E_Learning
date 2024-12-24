@@ -7,13 +7,16 @@ import { Modules} from '../modules/models/modules.schema';
 import { UpdateProgressDto } from './dto/update.dto';
 import {CreateProgressDto} from './dto/create.dto'
 import { StudentModule } from 'src/student/student.module';
-
+import { Courses } from 'src/courses/models/courses.schema';
+import * as fs from 'fs';
+import * as path from 'path';
 @Injectable()
 export class ProgressService {
   constructor(
     @InjectModel(Progress.name) private progressModel: Model<Progress>,
     @InjectModel(Student.name) private studentModel: Model<Student>,
     @InjectModel(Modules.name) private modulesModel: Model<Modules>,
+    @InjectModel(Courses.name) private courseModel: Model<Courses>,
   ) {}
   //needs to be revised 
   async registerCourse(createProgressDto: CreateProgressDto) {
@@ -36,8 +39,8 @@ export class ProgressService {
     if (student.enrolled_courses.includes(course_id)) {
       throw new BadRequestException('Student is already enrolled in this course');
     }
-  
-
+   const course = await this.courseModel.findById(course_id)
+    //student.instructors.push(course.created_by);
     student.enrolled_courses.push(course_id);
       // Create a new progress entry for the student
       const newProgress = new this.progressModel({
@@ -58,6 +61,7 @@ export class ProgressService {
     return newProgress;
   }
   
+
 
   async completeModule(userId: string, moduleId: string): Promise<Progress> {
     //asheel course mn enrolled courses  kman  
@@ -131,41 +135,128 @@ export class ProgressService {
         
       }
 
-      private gradeMapping = {
-        A: 4.0,
-        B: 3.0,
-        C: 2.0,
-        D: 1.0,
-        F: 0.0,
+      private letterGradeMapping = {
+        4.0: 'A',
+        3.0: 'B',
+        2.0: 'C',
+        1.0: 'D',
+        0.0: 'F',
       };
-    
-      // Calculate the final grade
-      async calculateFinalGrade(userId: string, courseId: string): Promise<number> {
+      
+      async calculateFinalGrade(userId: string, courseId: string): Promise<string> {
         const progress = await this.progressModel.findOne({ user_id: userId, course_id: courseId });
-    
+        console.log(progress);
         if (!progress) {
-          throw new NotFoundException('Progress not found for the specified user and course');
+          return
         }
     
         const grades = progress.performance;
-        if (grades.length === 0) {
-          throw new Error('No performance grades found for this user.');
-        }
+    
+        // if (grades.length === 0) {
+        //     throw new Error('No performance grades found for this user.');
+        // }
     
         // Calculate the GPA/average based on the grades
         let totalGradePoints = 0;
         for (let grade of grades) {
-          if (this.gradeMapping[grade] === undefined) {
-            throw new Error(`Invalid grade value: ${grade}`);
-          }
-          totalGradePoints += this.gradeMapping[grade];
+            // Convert grade to number if it's a string
+            const numericGrade = Number(grade); // Converts to number
+    
+            if (isNaN(numericGrade)) {
+                throw new Error(`Invalid grade value: ${grade}`); // Handle invalid numeric values
+            }
+    
+            totalGradePoints += numericGrade;
         }
     
-        const finalGrade = totalGradePoints / grades.length;
+        const finalGPA = totalGradePoints / grades.length;
     
-        // Return the final grade (GPA value)
-        return parseFloat(finalGrade.toFixed(2)); // Limiting to 2 decimal places
-      }
+        // Map the GPA to the corresponding letter grade
+        let letterGrade = '';
+        if (finalGPA >= 90) {
+            letterGrade = 'A';
+        } else if (finalGPA >= 80) {
+            letterGrade = 'B';
+        } else if (finalGPA >= 60) {
+            letterGrade = 'C';
+        } else if (finalGPA >= 40) {
+            letterGrade = 'D';
+        } else {
+            letterGrade = 'F';
+        }
     
-
+        // Return the final letter grade
+        return letterGrade;
+    }
+async generateAllProgressReport(): Promise<string> {
+    // Fetch all progress rows from the database
+    const allProgress = await this.progressModel.find().exec();
+  
+    if (!allProgress || allProgress.length === 0) {
+      throw new NotFoundException('No progress data found');
+    }
+  
+    // Prepare headers for the report
+    const headers = ['User ID', 'Course ID', 'Quiz 1', 'Quiz 2', 'Quiz 3', 'Quiz 4', 'Final Grade', 'Level'];
+  
+    // Prepare rows
+    const rows = allProgress.map(progress => {
+      const performance = progress.performance; // Array of quiz grades
+      const finalGrade = this.calculateUserFinalGrade(performance); // Calculate final grade
+      const level = this.getPerformanceCategory(finalGrade); // Determine the level based on the grade
+  
+      // Add user details, course ID, and grades
+      return [
+        progress.user_id, // User ID
+        progress.course_id, // Course ID
+        ...performance, // Quiz grades (e.g., Quiz 1, Quiz 2, ...)
+        finalGrade, // Final grade (A, B, etc.)
+        level, // Level (Excellent, Average, etc.)
+      ].join(', ');
+    });
+  
+    // Combine headers and rows
+    const reportData = [headers.join(', '), ...rows].join('\n');
+  
+    // Save the report to a file
+    const reportFilePath = path.join(__dirname, `progress_report.csv`);
+    fs.writeFileSync(reportFilePath, reportData);
+  
+    return reportFilePath; // Return the file path for download
+  }
+   // Helper function to calculate final grade from performance
+   private calculateUserFinalGrade(performance: string[]): string {
+    if (performance.length === 0) return 'F'; // Default to F if no grades exist
+  
+    const totalGradePoints = performance.reduce((sum, grade) => sum + Number(grade), 0);
+    const finalGPA = totalGradePoints / performance.length;
+  
+    // Map GPA to letter grade
+    if (finalGPA >= 90) return 'A';
+    if (finalGPA >= 80) return 'B';
+    if (finalGPA >= 60) return 'C';
+    if (finalGPA >= 40) return 'D';
+    return 'F';
+  }
+  
+  // Helper function to map grade to performance level
+  private getPerformanceCategory(finalGrade: string): string {
+    switch (finalGrade) {
+      case 'A':
+        return 'Excellent';
+      case 'B':
+        return 'Above Average';
+      case 'C':
+        return 'Average';
+      case 'D':
+        return 'Below Average';
+      default:
+        return 'Poor';
+    }
+  }
+  
+  // Delete the report file after download
+  async deleteReportFile(filePath: string) {
+    fs.unlinkSync(filePath);
+  }
 }

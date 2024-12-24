@@ -79,6 +79,16 @@ export class NotificationsController {
   async markAsRead(@Param('id') id: string) {
     return this.notificationsService.markAsRead(id);
   }
+  @Get('user/:userId')
+  async getUserNotifications(@Param('userId') userId: string) {
+    try {
+      const notifications = await this.notificationsService.findByUserId(userId);
+      return notifications;
+    } catch (error) {
+      console.error(`Error fetching notifications for user ${userId}:`, error.message);
+      throw new Error(`Error fetching notifications: ${error.message}`);
+    }
+  }
 
   // Get unread notifications count
   @Get('unread-count')

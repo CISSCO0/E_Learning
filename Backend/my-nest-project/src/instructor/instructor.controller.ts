@@ -11,6 +11,8 @@ import {
   UseGuards,
   UsePipes,
   ValidationPipe,
+  NotFoundException,
+  Res,
 } from '@nestjs/common';
 import { InstructorService } from './instructor.service';
 import { createInstructorDTo } from './dto/createInstructor.dto';
@@ -20,7 +22,7 @@ import { AuthGuard } from 'src/auth/guards/authentication.guard';
 import { AuthorizationGuard } from 'src/auth/guards/authorization.gaurd';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { Role } from '../auth/decorators/roles.decorator';
-import { Request } from 'express';
+import { Request,Response } from 'express';
 
 @UseGuards(AuthGuard, AuthorizationGuard)
 @Controller('instructors')
@@ -41,7 +43,25 @@ export class InstructorController {
   async getAllInstructors(): Promise<Instructor[]> {
     return this.instructorService.getAllInstructors();
   }
+  @Get("report")
+  async getInstructorRatingsReport(@Res() res: Response) {
+    try {
+      // Generate the report and get the file path
+      const reportFilePath = await this.instructorService.generateInstructorReport();
 
+      // Send the report as a downloadable file
+      res.download(reportFilePath, 'instructor_ratings_report.csv', (err) => {
+        if (err) {
+          res.status(500).send('Error downloading the report');
+        }
+
+        // Clean up the file after download
+        this.instructorService.deleteReportFile(reportFilePath);
+      });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  }
   // ======================================================================
   @Roles(Role.Admin, Role.Student)
   @Get(':id')
@@ -69,6 +89,14 @@ export class InstructorController {
   }
 
   // ======================================================================
-  
+  @Get('/user/:userId')
+  async getInstructorByUserId(@Param('userId') userId: string) {
+    const instructor = await this.instructorService.findByUserId(userId);
+    
+    if (!instructor) {
+      throw new NotFoundException(`Instructor with user ID ${userId} not found`);
+    }
+    return instructor;
+  }
 }
 

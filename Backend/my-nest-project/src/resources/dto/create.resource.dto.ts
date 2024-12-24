@@ -11,5 +11,5 @@ export class CreateResourceDto {
 
   @IsOptional()
   @IsBoolean()
-  outdated?: boolean; // Optional, default is false internally
+  outdated?: String; // Optional, default is false internally
 }

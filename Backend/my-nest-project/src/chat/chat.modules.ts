@@ -10,5 +10,6 @@ import { Chat, ChatSchema } from './models/chat.schema';
   ],
   controllers: [ChatController],
   providers: [ChatService],
+  exports: [MongooseModule]
 })
 export class ChatModule {}
