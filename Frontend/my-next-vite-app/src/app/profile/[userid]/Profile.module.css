@@ -1,0 +1,145 @@
+.profileContainer {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .profileHeader {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+  }
+  
+  .profilePicture {
+    border-radius: 50%;
+    margin-right: 30px;
+  }
+  
+  .userInfo {
+    flex-grow: 1;
+  }
+  
+  .userName {
+    font-size: 2.5rem;
+    color: #333;
+    margin: 0 0 10px;
+  }
+  
+  .userEmail {
+    font-size: 1.2rem;
+    color: #666;
+    margin: 0 0 5px;
+  }
+  
+  .userRole {
+    font-size: 1rem;
+    color: #999;
+    text-transform: capitalize;
+    margin: 0;
+  }
+  
+  .profileSection {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
+    margin-top: 20px;
+  }
+  
+  .sectionTitle {
+    color: #333;
+    border-bottom: 2px solid #333;
+    padding-bottom: 10px;
+    margin-top: 0;
+  }
+  
+  .subsectionTitle {
+    color: #666;
+    margin: 20px 0 10px;
+  }
+  
+  .courseList ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .courseItem {
+    background-color: #f0f0f0;
+    margin: 5px 0;
+    padding: 10px;
+    border-radius: 3px;
+    transition: background-color 0.3s;
+  }
+  
+  .courseItem:hover {
+    background-color: #e0e0e0;
+  }
+  
+  .performance, .ratings {
+    margin-top: 20px;
+  }
+  
+  .performanceBar {
+    background-color: #e0e0e0;
+    height: 20px;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .performanceFill {
+    background-color: #4CAF50;
+    height: 100%;
+    transition: width 0.5s ease-in-out;
+  }
+  
+  .performanceText {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #fff;
+    font-weight: bold;
+  }
+  
+  .ratingStars {
+    font-size: 24px;
+  }
+  
+  .starEmpty, .starFilled {
+    color: #ccc;
+    transition: color 0.2s;
+  }
+  
+  .starFilled {
+    color: gold;
+  }
+  
+  .ratingText {
+    margin-left: 10px;
+    font-size: 18px;
+    vertical-align: middle;
+  }
+  
+  .ratingComponent {
+    margin-top: 20px;
+  }
+  
+  .stars {
+    font-size: 24px;
+  }
+  
+  .star {
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+  
+  .star:hover {
+    color: gold;
+  }
+  
+  

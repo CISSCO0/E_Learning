@@ -1,0 +1,81 @@
+.course-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 30px;
+  }
+  
+  .course-card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease;
+  }
+  
+  .course-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .course-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+  }
+  
+  .course-content {
+    padding: 20px;
+  }
+  
+  .course-content h2 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: #333;
+  }
+  
+  .course-content p {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 20px;
+  }
+  
+  .course-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .course-price {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #2ecc71;
+  }
+  
+  .enroll-button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .enroll-button:hover {
+    background-color: #2980b9;
+  }
+  
+  .enroll-button.enrolled {
+    background-color: #2ecc71;
+  }
+  
+  .enroll-button.enrolled:hover {
+    background-color: #27ae60;
+  }
+  
+  @media (max-width: 768px) {
+    .course-list {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  

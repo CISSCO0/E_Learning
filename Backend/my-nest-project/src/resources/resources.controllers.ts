@@ -21,6 +21,7 @@ import { Role, Roles } from '../auth/decorators/roles.decorator';
 import { Public } from '../auth/decorators/public.decorator';
 import { AuthorizationGuard } from '../auth/guards/authorization.gaurd';
 import { AuthGuard } from '../auth/guards/authentication.guard';
+import { resource } from './models/resourse.schema';
 
 
 @Controller('resources')
@@ -64,17 +65,20 @@ export class ResourcesController {
   }
   
 
-  @Post(':resourceId/outdated')//tested
-  @Roles(Role.Admin, Role.Instructor)
-  async updateOutdatedFlag(@Param('resourceId') resourceId: string) {
-    return await this.resourcesService.updateResourceOutdatedFlag(resourceId);
+  @Put(':resourceId/outdated')
+  async updateOutdatedFlag(
+    @Param('resourceId') resourceId: string,
+    @Body() body: { outdated: boolean } // Accepts the 'flag' in the request body
+  ) {
+   // console.log(body.outdated);
+    return await this.resourcesService.updateResourceOutdatedFlag(resourceId, body.outdated);
   }
-
-  @Get(':moduleId/non-outdated')//tested 
-  @Public()
-  async fetchNonOutdatedResources(@Param('moduleId') moduleId: string) {
-    return this.resourcesService.fetchNonOutdatedResources(moduleId);
-  }
+  
+  @Get(':moduleId/non-outdated')
+@Public()
+async fetchNonOutdatedResources(@Param('moduleId') moduleId: string) {
+  return this.resourcesService.fetchNonOutdatedResources(moduleId);
+}
     // Fetch All Resources By Module ID (accessible to instructors and admins)
     @Get(':moduleId')//tested 
    @Roles(Role.Admin, Role.Instructor) // Only instructors and admins can view all resources
@@ -83,22 +87,26 @@ export class ResourcesController {
       return this.resourcesService.fetchAllResourcesByModuleId(moduleId);
     }
   
-  @Public()
   @Get(':moduleId/with-download-links')
   @Public()
   async fetchAllResourcesWithDownloadLinks(@Param('moduleId') moduleId: string) {
+    console.log(await this.resourcesService.fetchAllResourcesWithDownloadLinks(moduleId));
     return await this.resourcesService.fetchAllResourcesWithDownloadLinks(moduleId);
   }
   @Public()
   @Get('download/:fileName')
-  @Public()
+  //@Public()
   async downloadResource(@Param('fileName') fileName: string, @Res() res: any) {
     return this.resourcesService.downloadResource(fileName, res);
   }
 //done
-
+@Public()
+@Get()
+async ok() {
+  return this.resourcesService.ok();
+}
   @Delete(':moduleId/:resourceId')
-  @Roles(Role.Admin, Role.Instructor)
+ @Roles(Role.Admin, Role.Instructor)
   async deleteResource(
     @Param('moduleId') moduleId: string,
     @Param('resourceId') resourceId: string,

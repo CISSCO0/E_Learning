@@ -21,8 +21,8 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { Role } from '../auth/decorators/roles.decorator';
 
 @Controller('logs')
-@UseGuards(AuthGuard, AuthorizationGuard)
-@Roles(Role.Admin) // Restrict to Admin role
+// @UseGuards(AuthGuard, AuthorizationGuard)
+// @Roles(Role.Admin) // Restrict to Admin role
 export class LogsController {
   private readonly DEFAULT_PAGE = 1;
   private readonly DEFAULT_LIMIT = 10;

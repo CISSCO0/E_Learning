@@ -29,11 +29,11 @@ export class ChatMessageGateway implements OnGatewayConnection, OnGatewayDisconn
     const { chatId, senderId, content, date } = payload;
 
     // Save message to database
-    const newMessage = await this.chatMessageService.createChatMessage({
+    const newMessage = await this.chatMessageService.createMessage(senderId,{
       chatId,
-      senderId,
       content,
-      date: new Date(date),
+      senderId
+     // date: new Date(date),
     });
 
     // Broadcast the message to all connected clients

@@ -1,0 +1,89 @@
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .page-title {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .thread-list {
+    margin-top: 20px;
+  }
+  
+  .thread-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+  }
+  
+  .thread-title {
+    font-size: 18px;
+    color: #0066cc;
+    text-decoration: none;
+  }
+  
+  .thread-author {
+    font-size: 14px;
+    color: #666;
+  }
+  
+  .delete-button {
+    background-color: #ff4444;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+  
+  .create-thread-form,
+  .create-message-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .input-field,
+  .textarea-field {
+    padding: 5px;
+    font-size: 16px;
+  }
+  
+  .textarea-field {
+    height: 100px;
+  }
+  
+  .submit-button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+  }
+  
+  .message-list {
+    margin-top: 20px;
+  }
+  
+  .message-item {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .message-content {
+    margin-bottom: 5px;
+  }
+  
+  .message-author {
+    font-size: 14px;
+    color: #666;
+  }
+  
+  

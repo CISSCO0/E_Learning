@@ -1,7 +1,7 @@
 export type QuestionType = 'mcq' | 'true-false';
 
 export interface Question {
-  id: string;
+  _id: string;
   content: string;
   type: QuestionType;
   correctAnswer: string;

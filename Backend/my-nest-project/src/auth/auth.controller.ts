@@ -1,4 +1,4 @@
-import { Body, Controller, HttpStatus, Post, HttpException, Res, UseGuards, Get, Req } from '@nestjs/common';
+import { Body, Controller, HttpStatus, Post, HttpException, Res, UseGuards, Get, Req, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterRequestDto } from './dto/RegisterRequestDto';
 import { RegisterAdminDto } from './dto/RegisterAdminDto';
@@ -13,6 +13,8 @@ import { Roles } from './decorators/roles.decorator';
 import { Public } from './decorators/public.decorator';
 import { Request } from 'express';
 import * as dotenv from 'dotenv';
+
+import * as jwt from 'jsonwebtoken';
 @UseGuards(AuthGuard, AuthorizationGuard)
 @Controller('auth')
 export class AuthController {
@@ -20,6 +22,7 @@ export class AuthController {
     private readonly jwtService: JwtService
   ) {}
 
+ 
   @Get('check-token')
   @Public()
   async checkToken(@Req() req: Request, @Res() res: Response) {
@@ -134,6 +137,94 @@ export class AuthController {
   //     payload,
   //   };
   // }
+ /**
+   * Handles user logout by clearing the token cookie
+   * @param req - Incoming HTTP request
+   * @param res - HTTP response object
+   */
+ @Post('/logout')
+ @Public()
+ async logout(@Req() req: Request, @Res() res: Response) {
+   const token = this.extractToken(req);
+
+   if (!token) {
+     return res.status(400).json({ message: 'No token found' });
+   }
+
+   // Clear the token cookie
+   res.cookie('token', '', {
+     httpOnly: true,
+     expires: new Date(0), // Expire immediately
+   });
+
+   return res.status(200).json({ message: 'Logout successful' });
+ }
+  /**
+     * Extracts the token from cookies or Authorization header
+     * @param request - The incoming HTTP request
+     * @returns The JWT token if present
+     */
+    private extractToken(request: Request): string | undefined {
+      // Check cookies for the token
+      if (request.cookies && request.cookies.token) {
+        return request.cookies.token;
+      }
+  
+      // Check Authorization header for the token
+      const authHeader = request.headers['authorization'];
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        return authHeader.split(' ')[1];
+      }
+  
+      return undefined;
+    }
+
+@Get()
+@Public()
+async getID( @Req() req: Request){
+const token = this.extractToken(req);
+    
+    if (!token) {
+      throw new UnauthorizedException('Authentication token is required');
+    }
+
+    // Decode token to get userId
+    let decodedToken: any;
+    try {
+      decodedToken = jwt.verify(token, 'clown'); // Replace 'your-secret-key' with your JWT secret
+    } catch (err) {
+      console.log("no")
+      throw new UnauthorizedException('Invalid or expired token');
+    }
+    console.log('wooo: ', decodedToken);
+    const userId = decodedToken.userid;
+
+  return userId;
+}
+
+
+@Get('/role')
+@Public()
+async getRole( @Req() req: Request){
+const token = this.extractToken(req);
+    
+    if (!token) {
+      throw new UnauthorizedException('Authentication token is required');
+    }
+
+    // Decode token to get userId
+    let decodedToken: any;
+    try {
+      decodedToken = jwt.verify(token, 'clown'); // Replace 'your-secret-key' with your JWT secret
+    } catch (err) {
+      console.log("no")
+      throw new UnauthorizedException('Invalid or expired token');
+    }
+    console.log('wooo: ', decodedToken);
+    const role = decodedToken.role;
+
+  return role;
+}
 
   @Post('register')
   @Public()
@@ -190,4 +281,6 @@ export class AuthController {
       );
     }
   }
+
+ 
 }

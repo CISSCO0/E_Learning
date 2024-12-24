@@ -35,7 +35,9 @@ export class NotificationsService {
     }
   }
   
-
+  async findByUserId(userId: string): Promise<Notification[]> {
+    return this.notificationModel.find({ receiverId: { $in: [userId] } }).exec();
+}
   async findAll(): Promise<Notification[]> {
     try {
       return await this.notificationModel.find().exec();

@@ -9,11 +9,14 @@ import * as path from 'path';
 
 @Injectable()
 export class ResourcesService {
+
   constructor(
     @InjectModel(resource.name) private resourceModel: Model<resource>,
     @InjectModel(Modules.name) private moduleModel: Model<Modules>,
   ) {}
-
+  async ok() {
+   return await this.resourceModel.find()
+  }
   async addResource(
     moduleId: string,
     createResourceDto: CreateResourceDto,
@@ -50,31 +53,58 @@ export class ResourcesService {
   
     return savedResource;
   }
+  async updateResourceOutdatedFlag(resourceId: string, flag: boolean) {
+    if (!resourceId) {
+      throw new Error('Resource ID is required');
+    }
   
-
-  async updateResourceOutdatedFlag(resourceId: string): Promise<resource> {
-    const resourceItem = await this.resourceModel.findById(resourceId);
-    if (!resourceItem) throw new NotFoundException('Resource not found');
-
-    resourceItem.outdated = true;
-    return resourceItem.save();
+    const ans = flag ? 'true' : 'false';
+    console.log('Updating resource with ID:', resourceId);
+  
+    const updatedResource = await this.resourceModel.findByIdAndUpdate(
+      resourceId,
+      { outdated: ans }, // Update the 'outdated' field
+      { new: true } // Return the updated document
+    );
+  
+    if (!updatedResource) {
+      throw new Error('Resource not found');
+    }
+  
+    console.log('Updated resource:', updatedResource);
+    return updatedResource;
   }
-
-  async fetchNonOutdatedResources(moduleId: string): Promise<resource[]> {
-    const module = await this.moduleModel
-      .findById(moduleId)
-      .populate({
-        path: 'resources',
-        match: { outdated: false },
-        options: { sort: { createdAt: -1 } }, // Sort resources by date in descending order
+  
+  async getNonOutdatedResources(): Promise<resource[]> {
+    return this.resourceModel.find({ outdated: "false" }).exec();
+  }
+  async fetchNonOutdatedResources(moduleId: string): Promise<any[]> {
+    // Query the resources collection using the module ID and outdated condition
+    const resources = await this.resourceModel
+      .find({
+         // Ensure the resource belongs to the specified module
+        outdated: 'false',    // Match the string value 'false' for non-outdated resources
       })
+      .sort({ created_at: -1 }) // Sort by creation date in descending order
       .exec();
-
-    if (!module) throw new NotFoundException('Module not found');
-
-    return module.resources;
+  
+    // if (!resources || resources.length === 0) {
+    //   throw new NotFoundException('No non-outdated resources found for this module');
+    // }
+  
+    // Map and return the filtered resources
+    return resources.map((resource) => ({
+      outdated: resource.outdated,
+      type: resource.type,
+      content: resource.content,
+      fileName: resource.fileName,
+      filePath: resource.filePath,
+      created_at: resource.created_at,
+      downloadLink: `/resources/download/${resource.fileName}`,
+    }));
   }
-
+  
+  
   async fetchAllResourcesWithDownloadLinks(moduleId: string): Promise<any[]> {
     const module = await this.moduleModel
       .findById(moduleId)

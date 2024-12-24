@@ -10,6 +10,7 @@ import { StudentModule } from 'src/student/student.module';
 import { ModulesModule } from 'src/modules/modules.module';
 import { Student,StudentSchema } from 'src/student/models/student.Schema';
 import { Modules,ModulesSchema } from 'src/modules/models/modules.schema';
+import { CourseModule } from 'src/courses/courses.module';
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Progress.name, schema: ProgressSchema },
@@ -20,6 +21,7 @@ import { Modules,ModulesSchema } from 'src/modules/models/modules.schema';
      // For MongoDB integration
      forwardRef(() => StudentModule),
      forwardRef(() => ModulesModule),
+     forwardRef(() => CourseModule),
     AuthModule
   ],
   controllers: [ProgressController],

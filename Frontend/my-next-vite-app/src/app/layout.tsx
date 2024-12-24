@@ -1,12 +1,17 @@
 "use client";
 
-
 import React, { useState } from "react";
-import './global.css'
-import './all.css'
+import { useRouter } from "next/navigation";
+import './global.css';
+import './all.css';
+import './public/quizzes.css';
+import axios from "axios";
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [sidebarVisible, setSidebarVisible] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const router = useRouter();
 
   const toggleDropdown = () => {
     setDropdownVisible(!dropdownVisible);
@@ -16,55 +21,91 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     setSidebarVisible(!sidebarVisible);
   };
 
+  const handleNotificationClick = async () => {
+    router.push(`/notifications`);
+  };
+
+  const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && searchQuery.trim()) {
+      router.push(`/search?query=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
+
+  const navigateTo = (path: string) => {
+    router.push(path);
+    setDropdownVisible(false);
+    setSidebarVisible(false);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await axios.post("http://localhost:5000/auth/logout", {}, { withCredentials: true });
+      alert("Logged out successfully!");
+      router.push("/");
+    } catch (error) {
+      console.error("Logout failed:", error);
+      alert("Failed to log out. Please try again.");
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    const confirmation = confirm("Are you sure you want to delete your account? This action cannot be undone.");
+    if (confirmation) {
+      try {
+        await axios.delete("http://localhost:5000/users", { withCredentials: true });
+        alert("Account deleted successfully!");
+        router.push("/");
+      } catch (error) {
+        console.error("Account deletion failed:", error);
+        alert("Failed to delete account. Please try again.");
+      }
+    }
+  };
+
   return (
     <html lang="en">
-      <head>
-
-      </head>
+      <head></head>
       <body>
         <div className="header">
-          {/* Menu Icon (For Sidebar) */}
           <i className="fa-solid fa-bars menu-icon" onClick={toggleSidebar}></i>
 
-          {/* Search Bar */}
           <div className="search-bar">
             <i className="fa-solid fa-magnifying-glass"></i>
-            <input type="text" className="search-input" placeholder="Search..." />
+            <input
+              type="text"
+              className="search-input"
+              placeholder="Search..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={handleSearch}
+            />
           </div>
 
-          {/* Bell Icon */}
-          <i className="fa-solid fa-bell bell-icon"></i>
+          <i className="fa-solid fa-bell bell-icon" onClick={handleNotificationClick}></i>
 
-          {/* List Icon (Dropdown) */}
           <i className="fa-solid fa-list menu-icon" onClick={toggleDropdown}></i>
 
-          {/* Dropdown Menu */}
           {dropdownVisible && (
             <div className="dropdown">
               <ul>
-                <li><a>Account</a></li>
-                <li><a>Login</a></li>
-                <li><a>SignUp</a></li>
-                <li><a>Logout</a></li>
-                <li><a>Delete Account</a></li>
+                <li><a onClick={() => navigateTo('/dashboard')}>Account</a></li>
+                <li><a onClick={() => navigateTo('/auth/login')}>Login</a></li>
+                <li><a onClick={() => navigateTo('/auth/signUp')}>SignUp</a></li>
+                <li><a onClick={handleLogout}>Logout</a></li>
+                <li><a onClick={handleDeleteAccount}>Delete Account</a></li>
               </ul>
             </div>
           )}
 
-          {/* Sidebar */}
           <div className={`sidebar ${sidebarVisible ? "visible" : ""}`}>
             <ul>
-              <li><a>Home</a></li>
-              <li><a>Courses</a></li>
-              <li><a>Modules</a></li>
-              <li><a>Notification</a></li>
-              <li><a>Logs</a></li>
-              <li><a>Feedback</a></li>
+              <li><a onClick={() => navigateTo('/')}>Home</a></li>
+              <li><a onClick={() => navigateTo('/courses')}>Courses</a></li>
+              <li><a onClick={handleNotificationClick}>Notification</a></li>
             </ul>
           </div>
         </div>
 
-        {/* Main Content */}
         <div className="content">{children}</div>
       </body>
     </html>

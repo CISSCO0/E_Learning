@@ -16,7 +16,7 @@ export class ForumController {
     return this.forumService.getForumById(id);
   }
   
-  @Get(':courseId')
+  @Get('course/:courseId')
   async getForumByCourse(@Param('courseId') courseId: string): Promise<Forum> {
       return this.forumService.getForumByCourse(courseId);
   }

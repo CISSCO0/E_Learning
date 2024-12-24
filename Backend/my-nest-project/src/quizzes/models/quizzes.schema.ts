@@ -18,6 +18,13 @@ export class Quizzes extends Document{
 
   @Prop({ type:String,required: true })
   level: string;
+
+  @Prop({ type:Number,required: true })
+  numberOfQuestions: Number;
+
+  @Prop({ required: true })
+  type: string; // e.g., 'mcq' or 'true/false' or 'both'
+
 }
 
 export const QuizzesSchema = SchemaFactory.createForClass(Quizzes);

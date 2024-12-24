@@ -3,5 +3,6 @@ export class CreateQuizDto {
     numberOfQuestions: number; 
     difficultyLevel: number; 
     questionBank_id: string;
+    type:string
   }
   

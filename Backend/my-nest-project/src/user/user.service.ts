@@ -77,11 +77,25 @@ export class UserService {
     return this.userModel.findOne({ email }).exec();
   }
 // ====================================================================== 
-  async searchByName(name: string) {
-    return this.userModel
-      .find({ name: { $regex: name, $options: 'i' } }) 
-      .exec();
-  }
+async searchByNameAndRole(name: string, role: string) {
+ let r:string
+ switch(role){
+  case "student" : r = '3';break;
+  case "instructor": r = '2';break;
+  default: r = '2'
+ }
+  const res = this.userModel
+    .find({
+      name: { $regex: name, $options: 'i' }, // Case-insensitive search
+      role : r, // Filter by the target role
+    })
+    .exec();
+// console.log(JSON.stringify(res))
+return res;
+}
+
+
+
 // ====================================================================== 
 }
 

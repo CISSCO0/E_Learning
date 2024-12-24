@@ -49,7 +49,9 @@ export class AuthService {
   // Register Instructor (after user creation)
   async registerInstructor(user: any, registerDto: RegisterInstructorDto): Promise<any> {
     // Pass the userId from the user object to the instructor creation
+    console.log(user._id)
     const instructor = await this.instructorService.createInstructor({ ...registerDto, user_id: user._id });
+    console.log(instructor.user_id)
     return { user, role: 'instructor', instructor };
   }
 

@@ -5,24 +5,38 @@ import { useState } from 'react';
 
 interface QuestionListProps {
   questions: Question[];
-
 }
 
 export default function QuestionList({ questions }: QuestionListProps) {
   const [questions2, setQuestions] = useState<Question[]>(questions);
-  if (questions.length === 0) {
-    return <p>No questions available.</p>;
-  }
+
+  // Handle deletion of a question
   const handleDelete = (id: string) => {
-    setQuestions(questions.filter((question) => question.toString() !== id));
+    setQuestions(questions2.filter((question) => question.toString() !== id)); // Update state by filtering out the deleted question
   };
 
-//alert(JSON.stringify(questions[0]));
+  // Handle updating a question
+  const handleUpdate = (updatedQuestion: Question) => {
+    setQuestions(
+      questions2.map((question) =>
+        question === updatedQuestion ? updatedQuestion : question
+      )
+    );
+  };
+
+  if (questions2.length === 0) {
+    return <p>No questions available.</p>;
+  }
+
   return (
     <ul className="question-list">
       {questions2.map((question) => (
         <li key={question.toString()}>
-          <QuestionItem question={question}  onDelete={handleDelete} />
+          <QuestionItem
+            question={question}
+            onDelete={handleDelete}
+            onUpdate={handleUpdate} // Pass the update handler to QuestionItem
+          />
         </li>
       ))}
     </ul>
