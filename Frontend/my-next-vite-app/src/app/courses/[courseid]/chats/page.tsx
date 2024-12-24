@@ -40,7 +40,7 @@ export default function Home({ params }: { params: Promise<{ courseid: string }>
     if (courseId) {
       const fetchChats = async () => {
         try {
-          const response = await axios.get(`http://localhost:5000/chats/${courseId}`);
+          const response = await axios.get(`http://localhost:5000/chats/${courseId}`,{withCredentials: true});
         //  alert(courseId)
           setChats(response.data);
           const response2 = await axios.get(`http://localhost:5000/auth`,{withCredentials: true});

@@ -60,6 +60,13 @@ import { AuthorizationGuard } from '../auth/guards/authorization.gaurd';
       return this.modulesService.fetchModules(courseId);
     }
   
+    @Put(':moduleId/rating')//done 
+    //@Roles(Role.Instructor)
+   // @Roles(Role.Admin)
+   async updateRating(@Param('moduleId') courseId: string, @Body('rating') rating: number) {
+     if (rating<=10&&rating>=0)
+     return this.modulesService.updateRating(courseId, rating);
+     else return "Rating must be between 0 and 10.";
+   }
 
   }
-  

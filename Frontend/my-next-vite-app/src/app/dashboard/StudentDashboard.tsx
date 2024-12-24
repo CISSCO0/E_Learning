@@ -40,7 +40,14 @@ export default function StudentDashboard({ activeTab, userId }: { activeTab: str
         if (!studentData) {
           throw new Error("Student data not found.");
         }
+        const formattedCertificates = studentData.certificates.map((cert: string, index: number) => ({
+          _id: index.toString(),
+          title: cert,
+        }));
+      
+        setCertificates(formattedCertificates);
 
+        
         // Fetch enrolled courses and their grades
         const fetchedCourses = await Promise.all(
           studentData.enrolled_courses.map(async (courseId: string) => {
@@ -48,10 +55,12 @@ export default function StudentDashboard({ activeTab, userId }: { activeTab: str
               `http://localhost:5000/courses/${courseId}`,
               { withCredentials: true }
             );
+          //  alert(courseId)
             const gradeResponse = await axios.get(
               `http://localhost:5000/progress/${userId}/${courseId}/final-grade`,
               { withCredentials: true }
             );
+            // alert("ok")
             return {
               _id: courseId,
               title: courseResponse.data.title,
@@ -59,8 +68,11 @@ export default function StudentDashboard({ activeTab, userId }: { activeTab: str
             };
           })
         );
-
+       
         setEnrolledCourses(fetchedCourses);
+
+   // Map certificates
+   
 
         // Calculate average grade
         const gradeToPoint = { A: 4, B: 3, C: 2, D: 1, F: 0 };
@@ -74,34 +86,13 @@ export default function StudentDashboard({ activeTab, userId }: { activeTab: str
           ? totalPoints / fetchedCourses.length
           : 0;
         setAverageGrade(pointToGrade[Math.round(averagePoints)]);
-alert(studentData.instructors)
+
+// alert(studentData.instructors)
         // Fetch instructors (check if the instructors array exists)
-        if (studentData.instructors && Array.isArray(studentData.instructors)) {
-          const fetchedInstructors = await Promise.all(
-            studentData.instructors.map(async (instructorId: string) => {
-              const instructorResponse = await axios.get(
-                `http://localhost:5000/instructors/${instructorId}`,
-                { withCredentials: true }
-              );
-              const userResponse = await axios.get(
-                `http://localhost:5000/users/${instructorResponse.data.user_id}`,
-                { withCredentials: true }
-              );
-              return { _id: instructorId, name: userResponse.data.name };
-            })
-          );
-          setInstructors(fetchedInstructors);
-        } else {
-          setError("Instructors data is missing.");
-        }
+        // if (studentData.instructors && Array.isArray(studentData.instructors)) {
+       
 
-        // Map certificates
-        const formattedCertificates = studentData.certificates.map((cert: string, index: number) => ({
-          _id: index.toString(),
-          title: cert,
-        }));
-        setCertificates(formattedCertificates);
-
+     
       } catch (error) {
         console.error("Error fetching student data:", error);
         setError("Failed to load data. Please try again later.");
