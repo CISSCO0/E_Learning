@@ -1,10 +1,6 @@
-import { IsOptional, IsString, IsNotEmpty } from 'class-validator';
+import { IsOptional, IsString, IsArray, ValidateIf } from 'class-validator';
 
 export class UpdateQuestionDto {
-  @IsOptional()
-  @IsString()
-  answer?: string;
-
   @IsOptional()
   @IsString()
   level?: string;
@@ -12,4 +8,17 @@ export class UpdateQuestionDto {
   @IsOptional()
   @IsString()
   type?: string;
+
+  @IsOptional()
+  @IsString()
+  content?: string;
+
+  @ValidateIf((dto) => dto.type === 'mcq')
+  @IsArray()
+  @IsOptional()
+  possibleAnswers?: string[];
+
+  @IsOptional()
+  @IsString()
+  correctAnswer?: string;
 }
