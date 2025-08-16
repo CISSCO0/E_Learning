@@ -1,27 +1,36 @@
 import AuthForm from '../authForm'
-import '../../public/auth.css'
-// import '../../global.css'
+import Link from "next/link"
+
 export default function SignupPage() {
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          Create a new account
-        </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
-          Or{' '}
-          <a href="/auth/login" className="font-medium text-indigo-600 hover:text-indigo-500">
-            sign in to your existing account
-          </a>
+    <div className="space-y-8 animate-in fade-in-50 duration-500">
+      <div className="text-center space-y-3">
+        <h2 className="text-3xl font-bold text-neutral-900">Create your account</h2>
+        <p className="text-neutral-600">
+          Already have an account?{" "}
+          <Link
+            href="/auth/login"
+            className="font-semibold text-red-600 hover:text-red-700 transition-colors duration-200 hover:underline"
+          >
+            Sign in instead
+          </Link>
         </p>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <AuthForm isLogin={false} />
-        </div>
+      <AuthForm isLogin={false} />
+
+      <div className="text-center">
+        <p className="text-sm text-neutral-500">
+          By creating an account, you agree to our{" "}
+          <Link href="/terms" className="text-red-600 hover:text-red-700 hover:underline">
+            Terms of Service
+          </Link>{" "}
+          and{" "}
+          <Link href="/privacy" className="text-red-600 hover:text-red-700 hover:underline">
+            Privacy Policy
+          </Link>
+        </p>
       </div>
     </div>
   )
 }
-
