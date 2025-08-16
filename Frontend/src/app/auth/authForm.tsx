@@ -3,10 +3,17 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import StudentPreferences from './StudentPreference';
-import InstructorExpertise from './InstructorField';
+import InstructorField from './InstructorField';
 import axios from 'axios';
 //import login from './login/login.server'; // Import the login function
+import type React from "react"
 
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Loader2, Eye, EyeOff, User, Mail, Lock, GraduationCap } from "lucide-react"
 interface AuthFormProps {
   isLogin: boolean;
 }
@@ -33,7 +40,10 @@ export default function AuthForm({ isLogin }: AuthFormProps) {
   });
   const [showAdditionalInfo, setShowAdditionalInfo] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
+  const [showPassword, setShowPassword] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [preferences, setPreferences] = useState<string[]>([])
+  const [expertise, setExpertise] = useState("")
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -49,10 +59,9 @@ export default function AuthForm({ isLogin }: AuthFormProps) {
     setFormData((prev) => ({ ...prev, instructorExpertise: expertise }));
   };
 
-  const handleRoleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const role = e.target.value;
-    setFormData((prev) => ({ ...prev, role }));
-    setShowAdditionalInfo(role !== '');
+  const handleRoleChange = (value: string) => {
+    setFormData((prev) => ({ ...prev, role: value }));
+    setShowAdditionalInfo(value !== '');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -142,101 +151,136 @@ export default function AuthForm({ isLogin }: AuthFormProps) {
   };
   
 
-  return (
-    <form className="space-y-6" onSubmit={handleSubmit}>
+   return (
+    <form onSubmit={handleSubmit} className="space-y-6">
       {!isLogin && (
-        <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-            Name
-          </label>
-          <div className="mt-1">
-            <input
+        <div className="space-y-2 animate-in slide-in-from-top-2 duration-300">
+          <Label htmlFor="name" className="text-sm font-medium text-gray-700">
+            Full Name
+          </Label>
+          <div className="relative">
+            <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <Input
               id="name"
               name="name"
               type="text"
               required
-              className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               value={formData.name}
               onChange={handleInputChange}
+              className="pl-10 h-12 border-gray-200 focus:border-red-500 focus:ring-red-500 transition-all duration-200"
+              placeholder="Enter your full name"
             />
           </div>
         </div>
       )}
-      <div>
-        <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-          Email address
-        </label>
-        <div className="mt-1">
-          <input
+
+      <div className="space-y-2">
+        <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+          Email Address
+        </Label>
+        <div className="relative">
+          <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+          <Input
             id="email"
             name="email"
             type="email"
             autoComplete="email"
             required
-            className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             value={formData.email}
             onChange={handleInputChange}
+            className="pl-10 h-12 border-gray-200 focus:border-red-500 focus:ring-red-500 transition-all duration-200"
+            placeholder="Enter your email"
           />
         </div>
       </div>
 
-      <div>
-        <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+      <div className="space-y-2">
+        <Label htmlFor="password" className="text-sm font-medium text-gray-700">
           Password
-        </label>
-        <div className="mt-1">
-          <input
+        </Label>
+        <div className="relative">
+          <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+          <Input
             id="password"
             name="password"
-            type="password"
-            autoComplete="current-password"
+            type={showPassword ? "text" : "password"}
+            autoComplete={isLogin ? "current-password" : "new-password"}
             required
-            className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             value={formData.password}
             onChange={handleInputChange}
+            className="pl-10 pr-10 h-12 border-gray-200 focus:border-red-500 focus:ring-red-500 transition-all duration-200"
+            placeholder="Enter your password"
           />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors duration-200"
+          >
+            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          </button>
         </div>
       </div>
 
       {!isLogin && (
-        <div>
-          <label htmlFor="role" className="block text-sm font-medium text-gray-700">
-            Role
-          </label>
-          <select
-            id="role"
-            name="role"
-            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-            value={formData.role}
-            onChange={handleRoleChange}
-            required
-          >
-            <option value="">Select a role</option>
-            <option value="student">Student</option>
-            <option value="instructor">Instructor</option>
-          </select>
+        <div className="space-y-2 animate-in slide-in-from-top-2 duration-500">
+          <Label htmlFor="role" className="text-sm font-medium text-gray-700">
+            I am a...
+          </Label>
+          <Select onValueChange={handleRoleChange} required>
+            <SelectTrigger className="h-12 border-gray-200 focus:border-red-500 focus:ring-red-500">
+              <div className="flex items-center">
+                <GraduationCap className="mr-2 h-4 w-4 text-gray-400" />
+                <SelectValue placeholder="Select your role" />
+              </div>
+            </SelectTrigger>
+            <SelectContent className="bg-white border border-gray-200 shadow-lg rounded-lg">
+              <SelectItem 
+                value="student" 
+                className="hover:bg-red-50 focus:bg-red-50 cursor-pointer py-2  focus:border-red-500"
+              >
+                Student
+              </SelectItem>
+              <SelectItem 
+                value="instructor" 
+                className="hover:bg-red-50 focus:bg-red-50 cursor-pointer py-2  focus:border-red-500"
+              >
+                Instructor
+              </SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       )}
 
       {!isLogin && showAdditionalInfo && (
-        <div>
-          {formData.role === 'student' ? (
+        <div className="animate-in slide-in-from-bottom-3 duration-500">
+          {formData.role === "student" ? (
             <StudentPreferences onUpdate={handlePreferencesUpdate} />
           ) : (
-            <InstructorExpertise onUpdate={handleExpertiseUpdate} />
+            <InstructorField onUpdate={handleExpertiseUpdate} />
           )}
         </div>
       )}
 
-      <div>
-        <button
-          type="submit"
-          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-        >
-          {isLogin ? 'Sign in' : 'Sign up'}
-        </button>
-      </div>
-      {error && <p className="text-red-500 text-sm">{error}</p>}
+      {error && (
+        <Alert className="border-red-200 bg-red-50 animate-in slide-in-from-top-2 duration-300">
+          <AlertDescription className="text-red-700">{error}</AlertDescription>
+        </Alert>
+      )}
+
+      <Button
+        type="submit"
+        disabled={isLoading}
+        className="w-full h-12 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold rounded-xl transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl"
+      >
+        {isLoading ? (
+          <div className="flex items-center space-x-2">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            <span>{isLogin ? "Signing in..." : "Creating account..."}</span>
+          </div>
+        ) : (
+          <span>{isLogin ? "Sign in" : "Create account"}</span>
+        )}
+      </Button>
     </form>
-  );
+  )
 }
